@@ -1,27 +1,26 @@
-const db = require('../../database/models/index');
-const classes = require('./classes')(db.sequelize, db.Sequelize);
+const classesModel = require('./classesModel');
+const mongoose = require('mongoose');
 
 exports.getClassList = async () => {
-  return await classes.findAll({
-    order: [
-      //['id', 'DESC']
-      ['createdDate', 'DESC']
-    ]
-  });
+  return await classesModel.find({}).sort([['createdDate', -1]]);
 }
 
 exports.getClassInfo = async (classId) => {
-  return await classes.findByPk(parseInt(classId));
+  return await classesModel.findById(classId);
 }
 
 exports.createNewClass = async (data) => {
-  const newClass = await classes.create({
+  const classInfo = {
+    //creator: mongoose.Types.ObjectId(data.),
     className: data.className,
     section: data.section,
     subject: data.subject,
     room: data.room,
-    createdDate: new Date(),
-  });
+    inviteCode: "invite-code",
+  }
+  const newClass = new classesModel(classInfo);
 
-  return newClass.id;
+  await newClass.save();
+
+  return newClass._id;
 }
