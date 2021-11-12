@@ -24,3 +24,28 @@ exports.createNewClass = async (data) => {
 
   return newClass._id;
 }
+
+exports.classModify = async ({query,updateData}) => 
+{
+  console.log(updateData.inviteCode);
+  // const a = await classesModel.findByIdAndUpdate(
+  //   query,  
+  //   {
+  //     className: updateData.className,
+  //     section: updateData.section,
+  //     subject: updateData.subject,
+  //     room: updateData.room,
+  //     inviteCode: updateData.inviteCode,
+  //   }
+  // )
+
+  const a = await classesModel.updateOne(query,{
+      className: updateData.className,
+      section: updateData.section,
+      subject: updateData.subject,
+      room: updateData.room,
+      inviteCode: updateData.inviteCode
+  });
+
+  console.log(a);
+}

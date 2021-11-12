@@ -11,6 +11,18 @@ exports.getClass = async (req, res, next) => {
 }
 
 exports.createClass = async (req, res, next) => {
-  const newClassId = await classesService.createNewClass(req.body);
+  const data = req.body;
+  const newClassId = await classesService.createNewClass(data);
+  const updateData ={
+    //creator: mongoose.Types.ObjectId(data.),
+    className: data.className,
+    section: data.section,
+    subject: data.subject,
+    room: data.room,
+    inviteCode: newClassId.toString(),
+  }
+  console.log("modify");
+  await classesService.classModify({newClassId,updateData});
+
   res.json(newClassId);
 }
