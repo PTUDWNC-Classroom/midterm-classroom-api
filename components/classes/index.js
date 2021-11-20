@@ -1,13 +1,17 @@
-const express = require('express');
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 
-const classesController = require('./classesController');
+const classesController = require("./classesController")
 
-router.get('/:id', classesController.getClass);
+router.get("/teachers-of-class/:id", classesController.getListOfTeachers)
 
-router.post('/', classesController.createClass);
+router.get("/students-of-class/:id", classesController.getListOfStudents)
+
+router.get("/:id", classesController.getClass)
+
+router.post("/", classesController.createClass)
 
 /* GET classes listing. */
-router.get('/', classesController.getClassList);
+router.get("/", classesController.getClassList)
 
-module.exports = router;
+module.exports = router
