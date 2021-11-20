@@ -1,12 +1,12 @@
-const classesModel = require('./classesModel');
-const mongoose = require('mongoose');
+const classesModel = require("./classesModel")
+const mongoose = require("mongoose")
 
 exports.getClassList = async () => {
-  return await classesModel.find({}).sort([['createdDate', -1]]);
+  return await classesModel.Classes.find({}).sort([["createdDate", -1]])
 }
 
 exports.getClassInfo = async (classId) => {
-  return await classesModel.findById(classId);
+  return await classesModel.Classes.findById(classId)
 }
 
 exports.createNewClass = async (data) => {
@@ -18,18 +18,17 @@ exports.createNewClass = async (data) => {
     room: data.room,
     inviteCode: "invite-code",
   }
-  const newClass = new classesModel(classInfo);
+  const newClass = new classesModel.Classes(classInfo)
 
-  await newClass.save();
+  await newClass.save()
 
-  return newClass._id;
+  return newClass._id
 }
 
-exports.classModify = async ({query,updateData}) => 
-{
-  console.log(updateData.inviteCode);
+exports.classModify = async ({ query, updateData }) => {
+  console.log(updateData.inviteCode)
   // const a = await classesModel.findByIdAndUpdate(
-  //   query,  
+  //   query,
   //   {
   //     className: updateData.className,
   //     section: updateData.section,
@@ -39,13 +38,25 @@ exports.classModify = async ({query,updateData}) =>
   //   }
   // )
 
-  const a = await classesModel.updateOne(query,{
-      className: updateData.className,
-      section: updateData.section,
-      subject: updateData.subject,
-      room: updateData.room,
-      inviteCode: updateData.inviteCode
-  });
+  const a = await classesModel.updateOne(query, {
+    className: updateData.className,
+    section: updateData.section,
+    subject: updateData.subject,
+    room: updateData.room,
+    inviteCode: updateData.inviteCode,
+  })
 
-  console.log(a);
+  console.log(a)
+}
+
+exports.getListOfTeachers = async (classId) => {
+  return await classesModel.TeachersOfClass.find({
+    classId: mongoose.Types.ObjectId(classId),
+  })
+}
+
+exports.getListOfStudents = async (classId) => {
+  return await classesModel.StudentsOfClass.find({
+    classId: mongoose.Types.ObjectId(classId),
+  })
 }
