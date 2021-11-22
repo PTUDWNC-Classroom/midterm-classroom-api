@@ -31,38 +31,19 @@ exports.createNewUser = async (data) => {
 
 
 // passport needs to use these functions
-exports.passportSignIn=(req, res, next) =>{
-    console.log(req);
-    passport.authenticate('local', function(err, user, info) {
-        if (err) { return next(err); }
-        if (!user) { return res.json("Block")}
-        req.logIn(user, function(err) 
-        {
-          if (err) { return next(err); }
-  
-          let url = req.query.retURL;
-          if(!url)
-          {
-              url="/";
-          }
-            
-      
-          return res.redirect(url);
-        });
-      })(req, res, next);
-}
 
 
 exports.checkUser = async (username, password) => {
     const user = await userModel.findOne({ username: username })
 
+    console.log("checkuser")
     console.log(user);
     if (!user) {
         return false;
     }
     let checkPassword = await bcrypt.compare(password, user.password);
     if (checkPassword) {
-        return user._id;
+        return user;
     }
 
     return false;

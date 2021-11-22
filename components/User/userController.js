@@ -1,4 +1,3 @@
-const passport = require('./passport');
 const userService = require('./userService');
 
 exports.signUpHandler = async (req, res, next) => {
@@ -11,15 +10,12 @@ exports.signUpHandler = async (req, res, next) => {
 }
 
 exports.signInHandler = async (req, res, next) => {
-    // console.log(req.body);
-    // const data = req.body;
-   
-    // console.log(data.username)
-    // //const userId = await userService.checkUser(data.username,data.password);
-    // await userService.passportSignIn();
+   console.log("hello")
+   console.log(req.user);
 
-    // console.log("sign-in passport");
+   req.logout();
 
-    // res.json(userId);
+   console.log("logout");
+   console.log(req.user);
     
   }

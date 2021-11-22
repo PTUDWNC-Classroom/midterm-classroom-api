@@ -12,7 +12,7 @@ passport.use(new LocalStrategy(
         // if (user.accountState === 1) {
         //     return done(null, false, { message: 'Tài khoản của bạn đã bị khóa!!!!' });
         // }
-
+        console.log("da check")
         return done(null, user);
     }
 ));
@@ -26,3 +26,5 @@ passport.deserializeUser(function (id, done) {
         done(null, user);
     })
 });
+
+module.exports = passport;

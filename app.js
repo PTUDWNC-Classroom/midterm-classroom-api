@@ -6,6 +6,8 @@ const logger = require('morgan');
 const cors = require('cors')
 
 const db = require('./dal/db');
+const passport = require('./components/User/passport')
+
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./components/User/userRouter');
@@ -23,6 +25,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
 
 db();
 
