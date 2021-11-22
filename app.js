@@ -8,7 +8,7 @@ const cors = require('cors')
 const db = require('./dal/db');
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const usersRouter = require('./components/User/userRouter');
 const classesRouter = require('./components/classes/index');
 
 const app = express();
@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 db();
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/user', usersRouter);
 app.use('/classes', classesRouter);
 
 // catch 404 and forward to error handler
