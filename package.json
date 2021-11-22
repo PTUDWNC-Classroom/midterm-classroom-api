@@ -15,15 +15,18 @@
     "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^10.0.0",
+    "email-deep-validator": "^3.3.0",
     "express": "~4.16.1",
     "hbs": "~4.0.4",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.12",
     "morgan": "~1.9.1",
+    "nodemailer": "^6.7.1",
     "passport": "^0.5.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "random": "^3.0.6",
     "save": "^2.4.0"
   },
   "devDependencies": {
