@@ -1,20 +1,22 @@
-const express = require('express');
-const passport = require('./passport')
+const express = require("express")
+const passport = require("./passport")
 
-const router = express.Router();
+const router = express.Router()
 
-const userController = require('./userController');
+const userController = require("./userController")
 
-router.post('/sign-up', userController.signUpHandler);
+router.post("/sign-up", userController.signUpHandler)
 
-router.post('/login-social', userController.loginSocialHandler);
+router.post("/login-social", userController.loginSocialHandler)
 
-router.post('/valid-email', userController.validEmailHandler);
+router.post("/valid-email", userController.validEmailHandler)
 
-
-router.post('/sign-in', passport.authenticate('local', { 
+router.post(
+  "/sign-in",
+  passport.authenticate("local", {
     session: false,
- }),userController.signInHandler);
+  }),
+  userController.signInHandler
+)
 
-
-module.exports = router;
+module.exports = router

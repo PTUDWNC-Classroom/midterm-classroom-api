@@ -8,33 +8,19 @@ const classesSchema = mongoose.Schema({
   room: { type: String },
   createdDate: { type: Date, default: Date.now() },
   inviteCode: { type: String, require: true },
-  teachersOfClass: [
-    {
-      userId: { type: mongoose.Schema.Types.ObjectId, require: true },
-      userName: { type: String, require: true },
-      email: { type: String, require: true },
-    },
-  ],
-  studentsOfClass: [
-    {
-      userId: { type: mongoose.Schema.Types.ObjectId, require: true },
-      userName: { type: String, require: true },
-      email: { type: String, require: true },
-    },
-  ],
 })
 
 const teachersOfClassSchema = mongoose.Schema({
   classId: { type: mongoose.Schema.Types.ObjectId, require: true },
   userId: { type: mongoose.Schema.Types.ObjectId, require: true },
-  userName: { type: String, require: true },
+  username: { type: String, require: true },
   email: { type: String, require: true },
 })
 
 const studentsOfClassSchema = mongoose.Schema({
   classId: { type: mongoose.Schema.Types.ObjectId, require: true },
   userId: { type: mongoose.Schema.Types.ObjectId, require: true },
-  userName: { type: String, require: true },
+  username: { type: String, require: true },
   email: { type: String, require: true },
 })
 
