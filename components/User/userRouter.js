@@ -7,7 +7,14 @@ const userController = require('./userController');
 
 router.post('/sign-up', userController.signUpHandler);
 
-router.post('/sign-in', passport.authenticate('local', { session: false }),userController.signInHandler);
+router.post('/login-social', userController.loginSocialHandler);
+
+router.post('/valid-email', userController.validEmailHandler);
+
+
+router.post('/sign-in', passport.authenticate('local', { 
+    session: false,
+ }),userController.signInHandler);
 
 
 module.exports = router;

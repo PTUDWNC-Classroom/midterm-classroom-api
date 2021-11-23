@@ -6,6 +6,8 @@ const userService = require("./userService")
 passport.use(
   new LocalStrategy(async function (username, password, done) {
     const user = await userService.checkUser(username, password)
+    console.log("passport")
+    console.log(user)
     if (!user) {
       return done(null, false, {
         message: "Tên đăng nhập hoặc mật khẩu nhập sai!!!!",

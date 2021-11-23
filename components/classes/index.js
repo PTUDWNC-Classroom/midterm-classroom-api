@@ -12,6 +12,6 @@ router.get("/:id", classesController.getClass)
 router.post("/", classesController.createClass)
 
 /* GET classes listing. */
-router.get("/", classesController.getClassList)
+router.post("/getClassList", classesController.getClassList)
 
 module.exports = router

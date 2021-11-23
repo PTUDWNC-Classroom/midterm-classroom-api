@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const random = require('random')
+
 
 
 const saltRounds = 10;
@@ -19,10 +19,10 @@ async function configEmailToSend (account, OTP) {
 }
 
 exports.sendmail = async (email,content) => {
-    const OTP = random.int((min = 100000), (max = 999999))
+    
     console.log("sendmail");
     console.log(email);
-    const mailer = await configEmailToSend(email,OTP);
+    const mailer = await configEmailToSend(email,content);
     const smtpTransport = (await mailer).smtpTransport;
     const mail = (await mailer).mail;
 

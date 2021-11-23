@@ -1,8 +1,8 @@
 const classesModel = require("./classesModel")
 const mongoose = require("mongoose")
 
-exports.getClassList = async () => {
-  return await classesModel.Classes.find({}).sort([["createdDate", -1]])
+exports.getClassList = async (_id) => {
+  return await classesModel.Classes.find({creator: _id}).sort([["createdDate", -1]])
 }
 
 exports.getClassInfo = async (classId) => {
@@ -11,7 +11,7 @@ exports.getClassInfo = async (classId) => {
 
 exports.createNewClass = async (data) => {
   const classInfo = {
-    //creator: mongoose.Types.ObjectId(data.),
+    creator: mongoose.Types.ObjectId(data._id),
     className: data.className,
     section: data.section,
     subject: data.subject,
@@ -25,7 +25,8 @@ exports.createNewClass = async (data) => {
   return newClass._id
 }
 
-exports.classModify = async ({ query, updateData }) => {
+exports.classModify = async ({ updateData }) => {
+  console.log("update")
   console.log(updateData.inviteCode)
   // const a = await classesModel.findByIdAndUpdate(
   //   query,
@@ -37,8 +38,10 @@ exports.classModify = async ({ query, updateData }) => {
   //     inviteCode: updateData.inviteCode,
   //   }
   // )
-
-  const a = await classesModel.updateOne(query, {
+  const a = await classesModel.Classes.findOneAndUpdate(
+    {_id: updateData.inviteCode, className: updateData.className}, 
+    {
+    creator: updateData.creator,
     className: updateData.className,
     section: updateData.section,
     subject: updateData.subject,

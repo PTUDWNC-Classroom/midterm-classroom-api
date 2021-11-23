@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const emailValidator = require('email-deep-validator');
+//const emailValidator = require('email-deep-validator');
 
 const userModel = require('./userModel');
 const mongoose = require('mongoose');
@@ -23,37 +23,32 @@ exports.checkUserSignUp = async (account) => {
     }
     // Kiểm tra email cố tồn tại trong cơ sở dữ liệu không
     const emailExist = await userModel.findOne({ email: account.email});
-    const EmailValidator = new emailValidator();
-    let emailValid = await EmailValidator.verify(account.email);
-    console.log("EMAIL VALID");
-    //console.log(emailValid.validators.smtp.reason);
-    console.log(emailValid);
+    //const EmailValidator = new emailValidator();
+    //let emailValid = await EmailValidator.verify(account.email);
+    // console.log("EMAIL VALID");
+    // //console.log(emailValid.validators.smtp.reason);
+    // console.log(emailValid);
 
-    while(emailValid.validMailbox == null)
-    {
-        emailValid = await EmailValidator.verify(account.email);
-    }
+    // while(emailValid.validMailbox == null)
+    // {
+    //     emailValid = await EmailValidator.verify(account.email);
+    // }
     
-    check.valid = emailValid.validMailbox;
+    // check.valid = emailValid.validMailbox;
 
-    console.log("KIEM TRA EMAIL TỒN TẠI KHÔNG");
+    // console.log("KIEM TRA EMAIL TỒN TẠI KHÔNG");
 
-    console.log(emailExist);
+    // console.log(emailExist);
 
     
-    console.log(check);
-    //console.log(valid);
+    // console.log(check);
+    // //console.log(valid);
 
  
-    if (emailExist != null) {
-        check.isFailEmail = true;
-    }
-  
-    if(check.isFailEmail === true || check.valid === false)
-    {
-        console.log("vao false");
+    if (emailExist !== null) {
         return false;
     }
+  
     return true;
 }
 
@@ -71,6 +66,21 @@ exports.createNewUser = async (data) => {
     return newUser._id;
   }
 
+exports.AddSocialLoginUser = async (data) => {
+    console.log("addsocial")
+    console.log(data);
+    const userInfo = {
+      username: data.username,
+      email: data.email,
+    }
+
+    const newUser = new userModel(userInfo);
+  
+    await newUser.save();
+  
+    console.log("add")
+    return newUser._id;
+  }
 
 
 // passport needs to use these functions

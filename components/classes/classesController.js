@@ -1,7 +1,10 @@
+const mongoose = require('mongoose')
 const classesService = require("./classesService")
 
 exports.getClassList = async (req, res, next) => {
-  const result = await classesService.getClassList()
+  console.log(req.body);
+  const _id = req.body;
+  const result = await classesService.getClassList(_id)
   res.json(result)
 }
 
@@ -11,10 +14,12 @@ exports.getClass = async (req, res, next) => {
 }
 
 exports.createClass = async (req, res, next) => {
+  console.log("createClass");
   const data = req.body
+  console.log(data);
   const newClassId = await classesService.createNewClass(data)
   const updateData = {
-    //creator: mongoose.Types.ObjectId(data.),
+    creator: mongoose.Types.ObjectId(data._id),
     className: data.className,
     section: data.section,
     subject: data.subject,
@@ -22,7 +27,8 @@ exports.createClass = async (req, res, next) => {
     inviteCode: newClassId.toString(),
   }
   console.log("modify")
-  await classesService.classModify({ newClassId, updateData })
+  
+  await classesService.classModify({updateData })
 
   res.json(newClassId)
 }

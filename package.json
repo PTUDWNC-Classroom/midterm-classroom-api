@@ -27,7 +27,8 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "random": "^3.0.6",
-    "save": "^2.4.0"
+    "save": "^2.4.0",
+    "store": "^2.0.12"
   },
   "devDependencies": {
     "nodemon": "^2.0.13"
