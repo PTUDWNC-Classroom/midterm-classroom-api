@@ -19,4 +19,6 @@ router.post(
   userController.signInHandler
 )
 
+router.post("/add-student-id", userController.addStudentId)
+
 module.exports = router

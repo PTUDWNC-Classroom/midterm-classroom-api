@@ -101,3 +101,10 @@ exports.checkUser = async (username, password) => {
 exports.getUser = async (id) => {
   return await userModel.findOne({ _id: id })
 }
+
+exports.updateStudentId = async (userId, studentId) => {
+  return await userModel.findOneAndUpdate(
+    { _id: userId },
+    { studentId: studentId }
+  )
+}
