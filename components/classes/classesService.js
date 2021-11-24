@@ -2,9 +2,36 @@ const classesModel = require("./classesModel")
 const mongoose = require("mongoose")
 
 exports.getClassList = async (_id) => {
-  return await classesModel.Classes.find({ creator: _id }).sort([
-    ["createdDate", -1],
-  ])
+  console.log("dang get class list")
+  let classes = [];
+
+  const classStudent = await classesModel.StudentsOfClass.find({ userId: _id });
+  for(let i = 0; i<classStudent.length;i++)
+  {
+    console.log(classStudent[i].classId);
+    const a = await classesModel.Classes.find({_id: classStudent[i].classId})
+    //console.log(a);
+    if(a !== null)
+    {
+      classes.push(a[0]);
+    }
+  }
+
+  const classTeacher = await classesModel.TeachersOfClass.find({ userId: _id });
+  for(let i = 0; i<classTeacher.length;i++)
+  {
+    console.log(classTeacher[i].classId);
+    const a = await classesModel.Classes.find({_id: classTeacher[i].classId})
+    //console.log(a);
+    if(a !== null)
+    {
+      classes.push(a[0]);
+    }
+  }
+  
+  console.log(classes)
+  //console.log(classStudent)
+  return classes;
 }
 
 exports.getClassInfo = async (classId) => {
