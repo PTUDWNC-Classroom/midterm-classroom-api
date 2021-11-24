@@ -77,6 +77,7 @@ exports.signInHandler = async (req, res, next) => {
   // }
   // )
   console.log("hello");
+  console.log(req.user);
   res.json(req.user);
 }
 

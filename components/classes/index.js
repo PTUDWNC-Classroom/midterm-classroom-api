@@ -9,9 +9,11 @@ router.get("/students-of-class/:id", classesController.getListOfStudents)
 
 router.get("/:id", classesController.getClass)
 
-router.post("/", classesController.createClass)
-
 /* GET classes listing. */
 router.post("/class-list", classesController.getClassList)
+
+router.post("/", classesController.createClass)
+
+
 
 module.exports = router
