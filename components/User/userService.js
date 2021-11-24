@@ -65,8 +65,8 @@ exports.createNewUser = async (data) => {
 }
 
 exports.AddSocialLoginUser = async (data) => {
-  console.log("addsocial")
-  console.log(data)
+  //console.log("addsocial")
+  //console.log(data)
   const userInfo = {
     username: data.username,
     email: data.email,
@@ -76,7 +76,7 @@ exports.AddSocialLoginUser = async (data) => {
 
   await newUser.save()
 
-  console.log("add")
+  //console.log("add")
   return newUser._id
 }
 
@@ -85,8 +85,8 @@ exports.AddSocialLoginUser = async (data) => {
 exports.checkUser = async (username, password) => {
   const user = await userModel.findOne({ username: username })
 
-  console.log("check user")
-  console.log(user)
+  //console.log("check user")
+  //console.log(user)
   if (!user) {
     return false
   }

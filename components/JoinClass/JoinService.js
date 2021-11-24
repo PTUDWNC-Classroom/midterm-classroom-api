@@ -2,8 +2,8 @@ const classModel = require("../classes/classesModel")
 
 
 exports.addStudent = async ({userInfo}) => {
-    console.log("userINFO")
-    console.log(userInfo)
+    //console.log("userINFO")
+    //console.log(userInfo)
     const user = {
         classId: userInfo.classId,
         userId: userInfo._id,
@@ -14,14 +14,14 @@ exports.addStudent = async ({userInfo}) => {
 
     await newStudent.save()
   
-    console.log("add student");
+    //console.log("add student");
 
     return newStudent;
 }
 
 exports.addTeacher= async ({userInfo}) => {
-    console.log("userINFO")
-    console.log(userInfo)
+    //console.log("userINFO")
+    //console.log(userInfo)
     const user = {
         classId: userInfo.classId,
         userId: userInfo._id,
@@ -32,7 +32,7 @@ exports.addTeacher= async ({userInfo}) => {
 
     await newTeacher.save()
   
-    console.log("add teacher");
+    //console.log("add teacher");
 
     return newTeacher;
 }

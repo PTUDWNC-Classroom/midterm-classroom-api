@@ -2,13 +2,13 @@ const classesModel = require("./classesModel")
 const mongoose = require("mongoose")
 
 exports.getClassList = async (_id) => {
-  console.log("dang get class list")
+  //console.log("dang get class list")
   let classes = [];
 
   const classStudent = await classesModel.StudentsOfClass.find({ userId: _id });
   for(let i = 0; i<classStudent.length;i++)
   {
-    console.log(classStudent[i].classId);
+    //console.log(classStudent[i].classId);
     const a = await classesModel.Classes.find({_id: classStudent[i].classId})
     //console.log(a);
     if(a !== null)
@@ -20,7 +20,7 @@ exports.getClassList = async (_id) => {
   const classTeacher = await classesModel.TeachersOfClass.find({ userId: _id });
   for(let i = 0; i<classTeacher.length;i++)
   {
-    console.log(classTeacher[i].classId);
+    //console.log(classTeacher[i].classId);
     const a = await classesModel.Classes.find({_id: classTeacher[i].classId})
     //console.log(a);
     if(a !== null)
@@ -29,7 +29,7 @@ exports.getClassList = async (_id) => {
     }
   }
   
-  console.log(classes)
+  //console.log(classes)
   //console.log(classStudent)
   return classes;
 }
@@ -55,8 +55,8 @@ exports.createNewClass = async (data) => {
 }
 
 exports.classModify = async ({ updateData }) => {
-  console.log("update")
-  console.log(updateData.inviteCode)
+  //console.log("update")
+  //console.log(updateData.inviteCode)
   // const a = await classesModel.findByIdAndUpdate(
   //   query,
   //   {
@@ -79,7 +79,7 @@ exports.classModify = async ({ updateData }) => {
     }
   )
 
-  console.log(a)
+  //console.log(a)
 }
 
 exports.getListOfTeachers = async (classId) => {
@@ -104,5 +104,5 @@ exports.addTeacherToClass = async (classId, userId, username, email) => {
 
   const newTeacher = classesModel.TeachersOfClass(teacherInfo)
   await newTeacher.save()
-  console.log("save new teacher")
+  //console.log("save new teacher")
 }

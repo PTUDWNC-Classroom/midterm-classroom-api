@@ -5,12 +5,12 @@ const mailer = require("../User/mailer")
 const mongoose = require("mongoose")
 
 exports.addStudentHandler = async (req, res, next) => {
-    console.log(req.body);
+    //console.log(req.body);
 
     const userInfo = req.body;
     let result = null;
 
-    console.log(userInfo.classId)
+    //console.log(userInfo.classId)
     const checkStudentExistInData = await classModel.StudentsOfClass.findOne(
         {
             classId: mongoose.Types.ObjectId(userInfo.classId),
@@ -34,28 +34,28 @@ exports.addStudentHandler = async (req, res, next) => {
     }
     else if(checkStudentExistInData !== null)
     {
-        console.log("exist")
+        //console.log("exist")
         result = checkStudentExistInData;
     }
     else if(checkTeacherExistInData !== null)
     {
-        console.log("exist")
+        //console.log("exist")
         result = checkTeacherExistInData;
     }
 
-    console.log("new student");
+    //console.log("new student");
     //console.log(result);
 
     res.json(result);
 }
 
 exports.addTeacherHandler = async (req, res, next) => {
-    console.log(req.body);
+    //console.log(req.body);
 
     const userInfo = req.body;
     let result = null;
 
-    console.log(userInfo.classId)
+    //console.log(userInfo.classId)
     const checkStudentExistInData = await classModel.StudentsOfClass.findOne(
         {
             classId: mongoose.Types.ObjectId(userInfo.classId),
@@ -83,18 +83,18 @@ exports.addTeacherHandler = async (req, res, next) => {
     }
     else if(checkStudentExistInData !== null)
     {
-        console.log("exist")
+        //console.log("exist")
         result = checkStudentExistInData;
     }
     else if(checkTeacherExistInData !== null)
     {
-        console.log("exist")
+        //console.log("exist")
         result = checkTeacherExistInData;
     }
 
 
 
-    console.log("new teacher");
+    //console.log("new teacher");
     //console.log(result);
 
     res.json(result);
@@ -103,9 +103,9 @@ exports.addTeacherHandler = async (req, res, next) => {
 exports.sendInviteHandler = async (req, res, next) => {
     const inviteLink = process.env.invitelink + req.body.role + "/" + req.body.invite;
 
-    console.log(req.body);
+    //console.log(req.body);
 
-    console.log(inviteLink)
+    //console.log(inviteLink)
     mailer.sendmailInvite(req.body.email, inviteLink);
 
     res.json(true);

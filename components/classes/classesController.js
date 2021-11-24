@@ -3,11 +3,11 @@ const classesService = require("./classesService")
 const userService = require("../User/userService")
 
 exports.getClassList = async (req, res, next) => {
-  console.log("getClassList", req.body)
+  //console.log("getClassList", req.body)
   const _id = req.body
-  console.log(_id)
+  //console.log(_id)
   const result = await classesService.getClassList(_id)
-  console.log("result")
+  //console.log("result")
   res.json(result)
 }
 
@@ -17,9 +17,9 @@ exports.getClass = async (req, res, next) => {
 }
 
 exports.createClass = async (req, res, next) => {
-  console.log("createClass")
+  //console.log("createClass")
   const data = req.body
-  console.log(data)
+  //console.log(data)
   const newClassId = await classesService.createNewClass(data)
   const userInfo = await userService.getUser(data._id)
   await classesService.addTeacherToClass(
@@ -36,7 +36,7 @@ exports.createClass = async (req, res, next) => {
     room: data.room,
     inviteCode: newClassId.toString(),
   }
-  console.log("modify")
+  //console.log("modify")
 
   await classesService.classModify({ updateData })
 
