@@ -1,6 +1,7 @@
 const userService = require("./userService")
 const mailer = require("./mailer")
 const random = require("random")
+const jwt = require("jsonwebtoken")
 
 const passport = require("./passport")
 const userModel = require("./userModel")
@@ -62,15 +63,19 @@ exports.validEmailHandler = async (req, res, next) => {
 }
 
 exports.signInHandler = async (req, res, next) => {
-  // passport.authenticate('local',function(err, user, info) {
-  //   console.log(err);
-  //   console.log(user);
-  //   console.log(info);
-  // }
-  // )
-  //console.log("hello")
-  //console.log(req.user)
-  res.json(req.user)
+  res.json({
+    user: req.user,
+    token: jwt.sign(
+      {
+        _id: req.user._id,
+        username: req.user.username,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h",
+      }
+    ),
+  })
 }
 
 exports.addStudentId = async (req, res, next) => {

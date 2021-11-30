@@ -11,7 +11,7 @@ const passport = require("./components/User/passport")
 const indexRouter = require("./routes/index")
 const usersRouter = require("./components/User/userRouter")
 const classesRouter = require("./components/classes/index")
-const joinRouter = require("./components/JoinClass/JoinRouter");
+const joinRouter = require("./components/JoinClass/JoinRouter")
 const app = express()
 
 // view engine setup
@@ -30,7 +30,13 @@ db()
 
 app.use("/", indexRouter)
 app.use("/user", usersRouter)
-app.use("/classes", classesRouter)
+app.use(
+  "/classes",
+  passport.authenticate("jwt", {
+    session: false,
+  }),
+  classesRouter
+)
 app.use("/join", joinRouter)
 
 // catch 404 and forward to error handler
