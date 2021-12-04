@@ -21,4 +21,6 @@ router.post(
 
 router.post("/add-student-id", userController.addStudentId)
 
+router.get("/:id", userController.getUserInfo)
+
 module.exports = router

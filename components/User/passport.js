@@ -34,13 +34,12 @@ passport.deserializeUser(function (id, done) {
 })
 
 const opts = {}
-//opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
-opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("JWT")
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
 opts.secretOrKey = process.env.JWT_SECRET
 
 passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    console.log(jwt_payload)
+    //console.log(jwt_payload)
     return done(null, { _id: jwt_payload._id, username: jwt_payload.username })
   })
 )

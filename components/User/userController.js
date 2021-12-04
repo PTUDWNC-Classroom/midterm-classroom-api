@@ -3,14 +3,13 @@ const mailer = require("./mailer")
 const random = require("random")
 const jwt = require("jsonwebtoken")
 
-const passport = require("./passport")
 const userModel = require("./userModel")
 
 let store = require("store")
 
 exports.signUpHandler = async (req, res, next) => {
   //console.log("post ")
-  let userId = null
+  //let userId = null
   //console.log(req.body)
   const data = req.body
   const checkEmailValid = await userService.checkUserSignUp(data)
@@ -29,19 +28,46 @@ exports.signUpHandler = async (req, res, next) => {
 }
 
 exports.loginSocialHandler = async (req, res, next) => {
-  //console.log(req.body)
-  const data = req.body
+  const userInfo = await userService.getDecodedOAuthJwtGoogle(req.body.idToken)
+
+  const data = {
+    email: userInfo.payload.email,
+    username: userInfo.payload.name,
+    studentId: "",
+  }
+
   const emailExistInData = await userModel.findOne({ email: data.email })
-  //console.log(emailExistInData)
+
   if (emailExistInData && emailExistInData.password === undefined) {
-    //console.log("hello social")
-    res.json(emailExistInData._id)
+    res.json({
+      user: emailExistInData,
+      idToken: jwt.sign(
+        {
+          _id: emailExistInData._id,
+          username: emailExistInData.username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7h",
+        }
+      ),
+    })
   } else if (emailExistInData === null) {
-    //console.log("emailExistInData === null")
-    const _id = await userService.AddSocialLoginUser(data)
-    res.json(_id)
+    const newUser = await userService.addSocialLoginUser(data)
+    res.json({
+      user: newUser,
+      idToken: jwt.sign(
+        {
+          _id: newUser._id,
+          username: newUser.username,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7h",
+        }
+      ),
+    })
   } else {
-    //console.log("false")
     res.json(false)
   }
 }
@@ -72,7 +98,7 @@ exports.signInHandler = async (req, res, next) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1h",
+        expiresIn: "7h",
       }
     ),
   })
@@ -84,4 +110,12 @@ exports.addStudentId = async (req, res, next) => {
     req.body.studentId
   )
   res.json(userInfo)
+}
+
+exports.getUserInfo = async (req, res, next) => {
+  const userInfo = await userService.getUser(req.params.id)
+  if (userInfo) {
+    if (userInfo.password) delete userInfo.password
+    res.json(userInfo)
+  } else res.sendStatus(404)
 }

@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt")
 //const emailValidator = require('email-deep-validator');
+const { OAuth2Client } = require("google-auth-library")
 
 const userModel = require("./userModel")
 const mongoose = require("mongoose")
@@ -16,13 +17,13 @@ exports.hashPassword = async (password) => {
   return password_hash
 }
 
-exports.checkUserSignUp = async (account) => {
-  let check = {
-    isFailEmail: false,
-    valid: false,
-  }
+exports.checkUserSignUp = async (email) => {
+  // let check = {
+  //   isFailEmail: false,
+  //   valid: false,
+  // }
   // Kiểm tra email cố tồn tại trong cơ sở dữ liệu không
-  const emailExist = await userModel.findOne({ email: account.email })
+  const emailExist = await userModel.findOne({ email: email })
   //const EmailValidator = new emailValidator();
   //let emailValid = await EmailValidator.verify(account.email);
   // console.log("EMAIL VALID");
@@ -64,19 +65,11 @@ exports.createNewUser = async (data) => {
   return newUser._id
 }
 
-exports.AddSocialLoginUser = async (data) => {
-  //console.log("addsocial")
-  //console.log(data)
-  const userInfo = {
-    username: data.username,
-    email: data.email,
-  }
-
-  const newUser = new userModel(userInfo)
+exports.addSocialLoginUser = async (data) => {
+  const newUser = new userModel(data)
 
   await newUser.save()
 
-  //console.log("add")
   return newUser._id
 }
 
@@ -107,4 +100,24 @@ exports.updateStudentId = async (userId, studentId) => {
     { _id: userId },
     { studentId: studentId }
   )
+}
+
+/**
+ * Decode id token to get user info
+ * @param {string} token id token of Google
+ * @returns user info
+ */
+exports.getDecodedOAuthJwtGoogle = async (token) => {
+  try {
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    })
+
+    return ticket
+  } catch (error) {
+    return { status: 500, data: error }
+  }
 }

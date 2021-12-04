@@ -3,6 +3,7 @@ const classesService = require("./classesService")
 const userService = require("../User/userService")
 
 exports.getClassList = async (req, res, next) => {
+  //console.log(req)
   const _id = req.user._id
   const result = await classesService.getClassList(_id)
   res.json(result)
@@ -16,7 +17,7 @@ exports.getClass = async (req, res, next) => {
 exports.createClass = async (req, res, next) => {
   //console.log("createClass")
   const data = req.body
-  //console.log(data)
+  console.log(data)
   const newClassId = await classesService.createNewClass(data)
   const userInfo = await userService.getUser(data._id)
   await classesService.addTeacherToClass(
