@@ -82,9 +82,9 @@ exports.addTeacherHandler = async (req, res, next) => {
 
 exports.sendInviteHandler = async (req, res, next) => {
   const inviteLink =
-    process.env.INVITATION_LINK + req.body.role + "/" + req.body.invite
+    process.env.INVITATION_LINK + req.body.memberType + "/" + req.body.classId
 
-  //console.log(req.body);
+  //console.log(req.body)
 
   //console.log(inviteLink)
   mailer.sendmailInvite(req.body.email, inviteLink)

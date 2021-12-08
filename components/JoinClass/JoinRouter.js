@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-const joinController = require("./JoinController");
+const joinController = require("./JoinController")
 
 router.post("/add-student", joinController.addStudentHandler)
 
