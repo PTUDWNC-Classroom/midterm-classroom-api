@@ -3,7 +3,7 @@ const classesService = require("./classesService")
 const userService = require("../User/userService")
 
 exports.getClassList = async (req, res, next) => {
-  //console.log(req)
+  console.log(req.user)
   const _id = req.user._id
   const result = await classesService.getClassList(_id)
   res.json(result)

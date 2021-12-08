@@ -3,7 +3,6 @@ const mailer = require("./mailer")
 const random = require("random")
 const jwt = require("jsonwebtoken")
 
-
 const userModel = require("./userModel")
 
 let store = require("store")
@@ -114,7 +113,8 @@ exports.addStudentId = async (req, res, next) => {
 }
 
 exports.getUserInfo = async (req, res, next) => {
-  const userInfo = await userService.getUser(req.params.id)
+  const userInfo = await userService.getUser(req.user._id)
+
   if (userInfo) {
     if (userInfo.password) delete userInfo.password
     res.json(userInfo)

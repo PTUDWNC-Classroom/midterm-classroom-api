@@ -19,8 +19,20 @@ router.post(
   userController.signInHandler
 )
 
-router.post("/add-student-id", userController.addStudentId)
+router.post(
+  "/add-student-id",
+  passport.authenticate("jwt", {
+    session: false,
+  }),
+  userController.addStudentId
+)
 
-router.get("/:id", userController.getUserInfo)
+router.get(
+  "/",
+  passport.authenticate("jwt", {
+    session: false,
+  }),
+  userController.getUserInfo
+)
 
 module.exports = router
