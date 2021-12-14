@@ -1,37 +1,34 @@
-const classesModel = require("./classesModel")
 const mongoose = require("mongoose")
+//const { compareDesc } = require("date-fns")
+const compareDesc = require("date-fns/compareDesc")
+
+const classesModel = require("./classesModel")
 
 exports.getClassList = async (_id) => {
-  //console.log("dang get class list")
-  let classes = [];
+  let classes = []
 
-  const classStudent = await classesModel.StudentsOfClass.find({ userId: _id });
-  for(let i = 0; i<classStudent.length;i++)
-  {
-    //console.log(classStudent[i].classId);
-    const a = await classesModel.Classes.find({_id: classStudent[i].classId})
-    //console.log(a);
-    if(a !== null)
-    {
-      classes.push(a[0]);
+  const classStudent = await classesModel.StudentsOfClass.find({ userId: _id })
+
+  for (let i = 0; i < classStudent.length; i++) {
+    const a = await classesModel.Classes.findById(classStudent[i].classId)
+
+    if (a) {
+      classes.push(a)
     }
   }
 
-  const classTeacher = await classesModel.TeachersOfClass.find({ userId: _id });
-  for(let i = 0; i<classTeacher.length;i++)
-  {
-    //console.log(classTeacher[i].classId);
-    const a = await classesModel.Classes.find({_id: classTeacher[i].classId})
-    //console.log(a);
-    if(a !== null)
-    {
-      classes.push(a[0]);
+  const classTeacher = await classesModel.TeachersOfClass.find({ userId: _id })
+  for (let i = 0; i < classTeacher.length; i++) {
+    const a = await classesModel.Classes.findById(classTeacher[i].classId)
+
+    if (a) {
+      classes.push(a)
     }
   }
-  
-  //console.log(classes)
-  //console.log(classStudent)
-  return classes;
+
+  classes.sort((a, b) => compareDesc(a.createdDate, b.createdDate))
+
+  return classes
 }
 
 exports.getClassInfo = async (classId) => {
@@ -51,7 +48,7 @@ exports.createNewClass = async (data) => {
 
   await newClass.save()
 
-  return newClass._id
+  return newClass
 }
 
 exports.classModify = async ({ updateData }) => {

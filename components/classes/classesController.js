@@ -3,7 +3,6 @@ const classesService = require("./classesService")
 const userService = require("../User/userService")
 
 exports.getClassList = async (req, res, next) => {
-  console.log(req.user)
   const _id = req.user._id
   const result = await classesService.getClassList(_id)
   res.json(result)
@@ -15,30 +14,30 @@ exports.getClass = async (req, res, next) => {
 }
 
 exports.createClass = async (req, res, next) => {
-  //console.log("createClass")
-  const data = req.body
-  console.log(data)
-  const newClassId = await classesService.createNewClass(data)
-  const userInfo = await userService.getUser(data._id)
+  const userId = req.user._id
+  const data = { ...req.body, _id: userId }
+  const newClass = await classesService.createNewClass(data)
+  const userInfo = await userService.getUser(userId)
   await classesService.addTeacherToClass(
-    newClassId,
-    data._id,
+    newClass._id,
+    userId,
     userInfo.username,
     userInfo.email
   )
   const updateData = {
-    creator: mongoose.Types.ObjectId(data._id),
+    creator: mongoose.Types.ObjectId(userId),
     className: data.className,
     section: data.section,
     subject: data.subject,
     room: data.room,
-    inviteCode: newClassId.toString(),
+    inviteCode: newClass._id.toString(),
   }
   //console.log("modify")
 
   await classesService.classModify({ updateData })
+  const newClassList = await classesService.getClassList(userId)
 
-  res.json(newClassId)
+  res.json(newClassList)
 }
 
 exports.getListOfTeachers = async (req, res, next) => {
