@@ -3,16 +3,21 @@ const gradeAssignmentController = require("../Controller/gradeAssignmentControll
 
 const router = express.Router()
 
-
 router.post("/getGradeAssignment", gradeAssignmentController.getGradeStruct)
 
 router.post("/addAssignment", gradeAssignmentController.addAssignment)
 
 router.post("/updateAssignment", gradeAssignmentController.updateAssignment)
 
-router.post("/updateIndexAssignment", gradeAssignmentController.updateIndexAssignment)
+router.post(
+  "/updateIndexAssignment",
+  gradeAssignmentController.updateIndexAssignment
+)
 
 router.post("/deleteAssignment", gradeAssignmentController.deleteAssignment)
 
+router.post("/upload-assignment", gradeAssignmentController.uploadAssignment)
+
+router.post("/upload-student-list", gradeAssignmentController.uploadStudentList)
 
 module.exports = router
