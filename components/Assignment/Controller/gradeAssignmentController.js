@@ -106,11 +106,42 @@ exports.uploadStudentList = async (req, res, next) => {
   const classId = req.body.classId
   console.log(typeof classId)
 
-  // Xóa assignment trong database theo _id
+  let studentIdList = []
+  let fullnameList = []
+  // Remove title
+  data.shift()
+  // Mapping data
+  data.forEach((element) => {
+    studentIdList.push(element[0])
+    fullnameList.push(element[1])
+  })
+
+  // Upload student list
   const result = await gradeAssignmentService.uploadStudentListCSV(
-    data,
+    studentIdList,
+    fullnameList,
     classId
   )
 
+  // Create gradeList template if gradeAssignment exist
+  gradeAssignmentService.addGradeListTemplate(classId, studentIdList)
+
   res.json(result)
+}
+
+exports.getRealStudentList = async (req, res, next) => {
+  const classId = req.params.id
+
+  if (gradeAssignmentService.isValidObjectId(classId)) {
+    const realStudentList = await gradeAssignmentService.getRealStudentList(
+      classId
+    )
+
+    if (realStudentList) {
+      res.json([realStudentList.studentIdList, realStudentList.fullnameList])
+    } else res.json([])
+  } else {
+    res.status(404)
+    res.send("Class not found to get real student list!")
+  }
 }

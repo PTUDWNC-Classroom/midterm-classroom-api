@@ -20,4 +20,9 @@ router.post("/upload-assignment", gradeAssignmentController.uploadAssignment)
 
 router.post("/upload-student-list", gradeAssignmentController.uploadStudentList)
 
+router.get(
+  "/real-student-list/:id",
+  gradeAssignmentController.getRealStudentList
+)
+
 module.exports = router

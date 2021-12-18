@@ -8,8 +8,14 @@ const userSchema = mongoose.Schema({
   disableState: { type: Boolean },
   indexAssignment: { type: Number },
 
-  realStudentList: [{ type: String }],
-  grade: [{ type: String }],
+  // realStudentList: [{ type: String }],
+  // grade: [{ type: String }],
+  gradeList: [
+    {
+      studentId: { type: String },
+      grade: { type: String },
+    },
+  ],
 })
 
 const uploadedStudentListSchema = mongoose.Schema({
@@ -19,9 +25,9 @@ const uploadedStudentListSchema = mongoose.Schema({
 })
 
 const GradeAssignment = mongoose.model(
-  "gradeAssignment",
+  "gradeassignments",
   userSchema,
-  "gradeAssignment"
+  "gradeassignments"
 )
 const UploadedStudentList = mongoose.model(
   "uploadedStudentList",

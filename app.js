@@ -5,7 +5,6 @@ const cookieParser = require("cookie-parser")
 const logger = require("morgan")
 const cors = require("cors")
 
-
 const db = require("./dal/db")
 const passport = require("./components/User/passport")
 
@@ -40,7 +39,7 @@ app.use(
   classesRouter
 )
 app.use("/join", joinRouter)
-app.use("/assignment",assignmentRouter)
+app.use("/assignment", assignmentRouter)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404))

@@ -163,11 +163,32 @@ exports.deleteAssignmentStruct = async (assignment) => {
   return result
 }
 
+/**
+ * Create object array
+ * @param {Array} studentIdArr array of student id
+ * @param {Array} gradeArr  array of grade
+ * @returns
+ */
+const convertArrToObjArr = (studentIdArr, gradeArr) => {
+  let studentObjArr = []
+  studentIdArr.forEach((element, index) => {
+    studentObjArr.push({
+      studentId: element,
+      grade: gradeArr[index],
+    })
+  })
+
+  return studentObjArr
+}
+
 exports.uploadAssignmentCSV = async (data, assignmentId) => {
   console.log(assignmentId)
 
   let realStudentList = []
   let grade = []
+
+  // Remove titles
+  data.shift()
 
   // Mapping data
   data.forEach((element) => {
@@ -175,29 +196,21 @@ exports.uploadAssignmentCSV = async (data, assignmentId) => {
     grade.push(element[1])
   })
 
+  gradeList = convertArrToObjArr(realStudentList, grade)
+
   // Update
   const response = await gradeAssignmentModel.GradeAssignment.findOneAndUpdate(
     { _id: assignmentId },
     {
-      realStudentList: realStudentList,
-      grade: grade,
+      gradeList: gradeList,
     }
   )
 
   return response ? true : false
 }
 
-exports.uploadStudentListCSV = async (data, classId) => {
+exports.uploadStudentListCSV = async (studentIdList, fullnameList, classId) => {
   console.log(classId)
-
-  let studentIdList = []
-  let fullnameList = []
-
-  // Mapping data
-  data.forEach((element) => {
-    studentIdList.push(element[0])
-    fullnameList.push(element[1])
-  })
 
   // Check exist
   let response
@@ -224,25 +237,50 @@ exports.uploadStudentListCSV = async (data, classId) => {
     )
   }
 
-  // try {
-  //   // Try update
-  //   response = await gradeAssignmentModel.UploadedStudentList.findOneAndUpdate(
-  //     { _id: classId },
-  //     {
-  //       studentIdList: studentIdList,
-  //       fullnameList: fullnameList,
-  //     }
-  //   )
-  // } catch (error) {
-  //   // Create
-  //   response = new gradeAssignmentModel.UploadedStudentList({
-  //     classId: classId,
-  //     studentIdList: studentIdList,
-  //     fullnameList: fullnameList,
-  //   })
-  //   console.log("create", response)
-  //   await response.save()
-  // }
-
   return response ? true : false
+}
+
+/**
+ * Check valid classId
+ * @param {String} id classId
+ * @returns
+ */
+exports.isValidObjectId = (id) => {
+  if (mongoose.Types.ObjectId.isValid(id)) {
+    if (String(mongoose.Types.ObjectId(id)) === id) return true
+    return false
+  }
+  return false
+}
+
+exports.getRealStudentList = async (classId) => {
+  const result = await gradeAssignmentModel.UploadedStudentList.findOne({
+    classId: classId,
+  })
+
+  return result
+}
+
+const updateGradeList = async (gradeAssignment, tmpArr) => {
+  gradeAssignment.map(async (item) => {
+    await gradeAssignmentModel.GradeAssignment.findOneAndUpdate(
+      { _id: item._id },
+      {
+        gradeList: tmpArr,
+      }
+    )
+  })
+}
+
+exports.addGradeListTemplate = async (classId, studentIdList) => {
+  const gradeAssignment = await this.getGradeStructAssignment(classId)
+
+  if (gradeAssignment.length > 0) {
+    const tmpArr = convertArrToObjArr(
+      studentIdList,
+      Array(studentIdList.length).fill("")
+    )
+
+    await updateGradeList(gradeAssignment, tmpArr)
+  }
 }
