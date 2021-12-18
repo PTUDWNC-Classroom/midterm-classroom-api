@@ -25,4 +25,6 @@ router.get(
   gradeAssignmentController.getRealStudentList
 )
 
+router.put("/update-grade", gradeAssignmentController.updateGrade)
+
 module.exports = router

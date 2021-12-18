@@ -145,3 +145,13 @@ exports.getRealStudentList = async (req, res, next) => {
     res.send("Class not found to get real student list!")
   }
 }
+
+exports.updateGrade = async (req, res, next) => {
+  const data = req.body
+  const result = gradeAssignmentService.updateGrade(
+    data.assignmentId,
+    data.studentId,
+    data.grade
+  )
+  res.json(result)
+}

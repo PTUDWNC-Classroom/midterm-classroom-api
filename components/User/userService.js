@@ -96,10 +96,19 @@ exports.getUser = async (id) => {
 }
 
 exports.updateStudentId = async (userId, studentId) => {
-  return await userModel.findOneAndUpdate(
-    { _id: userId },
-    { studentId: studentId }
-  )
+  const userInfo = await userModel.findOne({ _id: userId })
+
+  if (!userInfo) {
+    return {
+      status: 412,
+      error: "Precondition Failed ",
+    }
+  }
+
+  await userModel.findOneAndUpdate({ _id: userId }, { studentId: studentId })
+
+  const res = userModel.findById(userId)
+  return res
 }
 
 /**

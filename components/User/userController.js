@@ -106,7 +106,7 @@ exports.signInHandler = async (req, res, next) => {
 
 exports.addStudentId = async (req, res, next) => {
   const userInfo = await userService.updateStudentId(
-    req.body.userId,
+    req.user._id,
     req.body.studentId
   )
   res.json(userInfo)

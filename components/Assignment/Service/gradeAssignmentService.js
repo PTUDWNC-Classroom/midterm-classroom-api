@@ -284,3 +284,20 @@ exports.addGradeListTemplate = async (classId, studentIdList) => {
     await updateGradeList(gradeAssignment, tmpArr)
   }
 }
+
+exports.updateGrade = async (assignmentId, studentId, grade) => {
+  const res = await gradeAssignmentModel.GradeAssignment.updateOne(
+    {
+      _id: assignmentId,
+      "gradeList.studentId": studentId,
+    },
+    {
+      $set: {
+        "gradeList.$.grade": grade,
+      },
+    }
+  )
+
+  console.log(grade)
+  return res
+}
