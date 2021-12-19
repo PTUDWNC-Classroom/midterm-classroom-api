@@ -45,6 +45,21 @@ exports.addAssignmentIntoStruct = async (assignment) => {
     //console.log(typeof( data[index - 1].indexAssignment))
     index = data_sort[index - 1].indexAssignment + 1
   }
+
+  // Get length of studentList to create gradeList template (to render grade board)
+  let gradeList = []
+
+  const classInfo = await gradeAssignmentModel.UploadedStudentList.findOne({classId: assignment.classId})
+
+  if (classInfo) {
+    classInfo.studentIdList.forEach((item) => {
+      gradeList.push({
+        studentId: item,
+        grade: ""
+      })
+    }) 
+  }
+
   // Thêm vào database
   const assignmentInfo = {
     classId: assignment.classId,
@@ -52,7 +67,9 @@ exports.addAssignmentIntoStruct = async (assignment) => {
     gradeDetail: assignment.gradeDetail,
     disableState: true,
     indexAssignment: index,
+    gradeList: gradeList,
   }
+
   const newGradeAssignment = new gradeAssignmentModel.GradeAssignment(
     assignmentInfo
   )
