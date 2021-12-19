@@ -49,7 +49,7 @@ exports.addAssignmentIntoStruct = async (assignment) => {
   // Get length of studentList to create gradeList template (to render grade board)
   let gradeList = []
 
-  const classInfo = await gradeAssignmentModel.UploadedStudentList.findOne({classId: assignment.classId})
+  const classInfo = await gradeAssignmentModel.UploadedStudentList.findOne({ classId: assignment.classId })
 
   if (classInfo) {
     classInfo.studentIdList.forEach((item) => {
@@ -57,7 +57,7 @@ exports.addAssignmentIntoStruct = async (assignment) => {
         studentId: item,
         grade: ""
       })
-    }) 
+    })
   }
 
   // Thêm vào database
@@ -378,6 +378,27 @@ exports.updateGrade = async (assignmentId, studentId, grade) => {
     }
   )
 
-  console.log(grade)
-  return res
+  //console.log(res)
+  return res.modifiedCount
+}
+
+exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
+  let totalGrade = 0;
+  let totalGradeColumn = []
+  if (gradeStructAssignemnt?.length > 0) {
+    gradeStructAssignemnt.forEach((item) => {
+      totalGrade += parseFloat(item.gradeDetail)
+    })
+
+    totalGradeColumn = Array(gradeStructAssignemnt[0].gradeList.length).fill(0)
+
+    gradeStructAssignemnt.forEach((item) => {
+      const prescent = parseFloat(item.gradeDetail) / totalGrade
+      item.gradeList.forEach((student, index) => {
+        totalGradeColumn[index] += parseFloat((student.grade * prescent).toFixed(2))
+      })
+    })
+  }
+
+  return totalGradeColumn
 }

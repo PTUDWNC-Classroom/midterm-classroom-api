@@ -155,3 +155,15 @@ exports.updateGrade = async (req, res, next) => {
   )
   res.json(result)
 }
+
+exports.getTotalGradeColumn = async (req, res, next) => {
+  const classId = req.params.id
+
+  const gradeStructAssignemnt = await gradeAssignmentService.getGradeStructAssignment(classId)
+  
+  const result = await gradeAssignmentService.calcTotalGradeColumn(gradeStructAssignemnt, classId)
+
+  //console.log(result)
+  res.json(result)
+}
+

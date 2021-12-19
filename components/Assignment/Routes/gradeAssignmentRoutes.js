@@ -27,4 +27,6 @@ router.get(
 
 router.put("/update-grade", gradeAssignmentController.updateGrade)
 
+router.get("/total-grade-column/:id", gradeAssignmentController.getTotalGradeColumn)
+
 module.exports = router
