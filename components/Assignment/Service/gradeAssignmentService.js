@@ -226,6 +226,27 @@ exports.uploadAssignmentCSV = async (data, assignmentId) => {
   return response ? true : false
 }
 
+// Sắp xếp tăng dần
+function SortUpAscending(studentIdList, fullnameList) {
+  let tmp = null;
+  let name = null;
+  for (let i = 0; i < studentIdList.length - 1; i++) {
+    for (let j = i + 1; j < studentIdList.length; j++) {
+      if (studentIdList[i] > studentIdList[j]) {
+        tmp = studentIdList[i]
+        studentIdList[i] = studentIdList[j]
+        studentIdList[j] = tmp
+
+        name = fullnameList[i]
+        fullnameList[i] = fullnameList[j]
+        fullnameList[j] = name
+      }
+    }
+  }
+  //console.log(studentIdList)
+  //console.log(fullnameList);
+}
+
 exports.uploadStudentListCSV = async (studentIdList, fullnameList, classId) => {
   console.log(classId)
 
@@ -235,6 +256,8 @@ exports.uploadStudentListCSV = async (studentIdList, fullnameList, classId) => {
     classId: classId,
   })
   console.log(a)
+  // Sắp xếp theo studentId tăng dần
+  SortUpAscending(studentIdList, fullnameList);
   if (!a) {
     response = new gradeAssignmentModel.UploadedStudentList({
       classId: classId,
@@ -245,11 +268,51 @@ exports.uploadStudentListCSV = async (studentIdList, fullnameList, classId) => {
     await response.save()
   } else {
     console.log("update")
+
+    // Lấy dữ liệu từ database
+    /**
+     * Ta nhận được:
+     * a.studentIdList
+     * a.fullnameList
+     */
+
+    // So sánh dữ liệu cũ với dữ liệu mới
+    /**
+     * VD: cũ có:
+     * studentIdList: 1 3 4 
+     * fullnameList:  a c d 
+     * 
+     * mới có:
+     * studentIdList: 1 2 6 
+     * fullnameList:  a c e
+     * 
+     * 
+     */
+
+    var studentIdListData = a.studentIdList;
+    var fullnameListData = a.fullnameList;
+
+    //console.log(studentIdListData);
+
+    // So sánh studentId cũ và mới và trả về mảng studentIdList không trùng
+    var newstudentIdList = studentIdList.filter(val => !studentIdListData.includes(val));
+
+    // Thêm newstudentIdList vào studentIdList ban đầu
+    // Thêm fullnameList mới tương ứng với newstudentIdList
+    newstudentIdList.map(val => {
+      studentIdListData.push(val);
+      fullnameListData.push(fullnameList[studentIdList.indexOf(val)]);
+    })
+
+    // Sắp xếp theo studentId tăng dần
+    SortUpAscending(studentIdListData, fullnameListData);
+
+
     response = await gradeAssignmentModel.UploadedStudentList.findOneAndUpdate(
       { classId: classId },
       {
-        studentIdList: studentIdList,
-        fullnameList: fullnameList,
+        studentIdList: studentIdListData,
+        fullnameList: fullnameListData,
       }
     )
   }
