@@ -198,21 +198,51 @@ const convertArrToObjArr = (studentIdArr, gradeArr) => {
   return studentObjArr
 }
 
-exports.uploadAssignmentCSV = async (data, assignmentId) => {
+exports.uploadAssignmentCSV = async (data, assignmentId,classId) => {
   console.log(assignmentId)
-
-  let realStudentList = []
-  let grade = []
+  //console.log(classId);
+  
 
   // Remove titles
   data.shift()
 
-  // Mapping data
+  
+  // Lấy dữ liệu từ data thành 2 mảng
+  let StudentIdList = []
+  let gradeList = []
   data.forEach((element) => {
-    realStudentList.push(element[0])
-    grade.push(element[1])
+    StudentIdList.push(element[0])
+    gradeList.push(element[1])
   })
 
+  // Chưa biết xử lý nếu như StudentList không có upload trước
+  // Lấy dữ liệu từ UploadedStudentList
+  const StudentList = await gradeAssignmentModel.UploadedStudentList.findOne({classId: classId});
+
+  console.log(StudentList);
+  // Map realStudentList bằng studentIdList từ StudentList vừa lấy
+  let realStudentList =  StudentList.studentIdList;
+
+  // Không biết xử lý như thế nào nếu như StudentId vừa truyền vào không có trong StudentIdList
+
+  // Tạo một mảng [0,0...] với độ dài của realStudentList
+  //let grade = Array(realStudentList.length).fill(null).map((u, i) => 0);
+
+  
+  //console.log(realStudentList);
+  // Map grade dựa vào realStudentList vào StudentIdList
+  let grade = realStudentList.map(val => {
+      if(StudentIdList.includes(val))
+      {
+        return gradeList[StudentIdList.indexOf(val)];
+      }
+      else{
+        return 0;
+      }
+  }
+    )
+
+  console.log(grade);
   gradeList = convertArrToObjArr(realStudentList, grade)
 
   // Update
@@ -401,4 +431,12 @@ exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
   }
 
   return totalGradeColumn
+}
+
+
+exports.createManageBoardData = async (classId,assignmentIdList) => {
+  console.log(classId);
+  console.log(assignmentIdList);
+
+  return 0;
 }

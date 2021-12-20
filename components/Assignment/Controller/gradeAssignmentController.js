@@ -79,15 +79,18 @@ exports.uploadAssignment = async (req, res, next) => {
   /**
    * data: Array
    * assignmentId: String
+   * classId: string
    */
-  console.log("Data", req.body)
-  const data = req.body.data
-  const assignmentId = req.body.assignmentId
+  console.log("Data", req.body);
+  const data = req.body.data;
+  const assignmentId = req.body.assignmentId;
+  const classId = req.body.classId;
 
-  // Xóa assignment trong database theo _id
+  //console.log(classId);
   const result = await gradeAssignmentService.uploadAssignmentCSV(
     data,
-    assignmentId
+    assignmentId,
+    classId
   )
 
   res.json(result)
@@ -167,3 +170,21 @@ exports.getTotalGradeColumn = async (req, res, next) => {
   res.json(result)
 }
 
+exports.getDataExport= async (req, res, next) => {
+  /**
+   * Nhận dữ liệu
+   * classId: string
+   * assignmentIdList: []
+   */
+  console.log(req.body);
+
+  const classId = req.body.classId;
+  const assignmentIdList = req.body.assignmentIdList;
+
+  // Xử lý map listStudent với assignment 
+  const result = await gradeAssignmentService.createManageBoardData(classId,assignmentIdList);
+
+  console.log(result);
+
+  res.json([["A","B"]]);
+}
