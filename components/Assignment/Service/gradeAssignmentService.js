@@ -198,15 +198,17 @@ const convertArrToObjArr = (studentIdArr, gradeArr) => {
   return studentObjArr
 }
 
-exports.uploadAssignmentCSV = async (data, assignmentId,classId) => {
+exports.uploadAssignmentCSV = async (data, assignmentId, classId) => {
+
+  let response;
   console.log(assignmentId)
   //console.log(classId);
-  
+
 
   // Remove titles
   data.shift()
 
-  
+
   // Lấy dữ liệu từ data thành 2 mảng
   let StudentIdList = []
   let gradeList = []
@@ -217,41 +219,66 @@ exports.uploadAssignmentCSV = async (data, assignmentId,classId) => {
 
   // Chưa biết xử lý nếu như StudentList không có upload trước
   // Lấy dữ liệu từ UploadedStudentList
-  const StudentList = await gradeAssignmentModel.UploadedStudentList.findOne({classId: classId});
+  const StudentList = await gradeAssignmentModel.UploadedStudentList.findOne({ classId: classId });
 
-  console.log(StudentList);
-  // Map realStudentList bằng studentIdList từ StudentList vừa lấy
-  let realStudentList =  StudentList.studentIdList;
+  if (StudentList !== null) {
+    // Gán realStudentList bằng studentIdList từ StudentList vừa lấy
+    let realStudentList = StudentList.studentIdList;
 
-  // Không biết xử lý như thế nào nếu như StudentId vừa truyền vào không có trong StudentIdList
+    // Lấy dữ liệu hiện tại của Assignment bằng assignmentId
+    const currentAssignment = await gradeAssignmentModel.GradeAssignment.findOne({ _id: assignmentId });
 
-  // Tạo một mảng [0,0...] với độ dài của realStudentList
-  //let grade = Array(realStudentList.length).fill(null).map((u, i) => 0);
+    // Không biết xử lý như thế nào nếu như StudentId vừa truyền vào không có trong StudentIdList
 
-  
-  //console.log(realStudentList);
-  // Map grade dựa vào realStudentList vào StudentIdList
-  let grade = realStudentList.map(val => {
-      if(StudentIdList.includes(val))
-      {
-        return gradeList[StudentIdList.indexOf(val)];
+    let grade = [];
+
+    if (currentAssignment.gradeList.length === 0) {
+      // Map grade dựa vào realStudentList vào StudentIdList
+      grade = realStudentList.map(val => {
+        if (StudentIdList.includes(val)) {
+          return gradeList[StudentIdList.indexOf(val)];
+        }
+        else {
+          return 0;
+        }
       }
-      else{
-        return 0;
-      }
-  }
-    )
-
-  console.log(grade);
-  gradeList = convertArrToObjArr(realStudentList, grade)
-
-  // Update
-  const response = await gradeAssignmentModel.GradeAssignment.findOneAndUpdate(
-    { _id: assignmentId },
-    {
-      gradeList: gradeList,
+      )
     }
-  )
+    else {
+      grade = currentAssignment.gradeList.map(val => val.grade);
+      console.log(grade);
+      // Map grade dựa vào realStudentList vào StudentIdList
+      let newgrade = realStudentList.map(val => {
+        if (StudentIdList.includes(val)) {
+          return gradeList[StudentIdList.indexOf(val)];
+        }
+      })
+      console.log(newgrade);
+
+      grade = grade.map((val, index) => {
+        if (newgrade[index] !== undefined) {
+          return newgrade[index];
+        }
+        else {
+          return val;
+        }
+      })
+
+    }
+
+
+    console.log(grade);
+    gradeList = convertArrToObjArr(realStudentList, grade)
+
+    // Update
+    response = await gradeAssignmentModel.GradeAssignment.findOneAndUpdate(
+      { _id: assignmentId },
+      {
+        gradeList: gradeList,
+      }
+    )
+  }
+
 
   return response ? true : false
 }
@@ -434,9 +461,94 @@ exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
 }
 
 
-exports.createManageBoardData = async (classId,assignmentIdList) => {
+exports.createManageBoardData = async (classId, assignmentIdList) => {
   console.log(classId);
   console.log(assignmentIdList);
+  let data = [];
+  let headers = ["Student Id", "FullName"];
 
-  return 0;
+  // Tìm danh sách sinh viên 
+  const studentList = await gradeAssignmentModel.UploadedStudentList.findOne({ classId: classId });
+
+  if (studentList !== null) {
+    // Tìm các Assignment và lưu trong AssignmentList
+    let AssignmentList = [];
+    for (let index = 0; index < assignmentIdList.length; index++) {
+      let tmp = await gradeAssignmentModel.GradeAssignment.findOne({ _id: assignmentIdList[index] });
+      AssignmentList.push(tmp);
+    }
+
+    // Map studentList với các Assignment
+    // Gắn header của các assignment và điểm của từng assignment
+    // Lấy điểm của mỗi assignment
+    let percent = [];
+    let gradeOfAssignments = [];
+    AssignmentList.forEach(assignment => {
+      headers.push(assignment.gradeTitle);
+      gradeOfAssignments.push(assignment.gradeList.map(val => parseFloat(val.grade)));
+      percent.push(parseFloat(assignment.gradeDetail));
+    })
+
+    // Tính phần trăm của mỗi assignment
+    let totalGrade = 0;
+    percent.forEach((grade)=>{
+      totalGrade+=grade;
+    })
+
+    percent = percent.map((grade)=>{
+      return grade/totalGrade;
+    })
+
+    //console.log(percent);
+
+    // Thêm header vào data
+    headers.push("Total");
+    data.push(headers);
+
+    // Tính total
+    let total = [];
+    for (let i = 0; i < gradeOfAssignments.length; i++) {
+      gradeOfAssignments[i].map((grade, index) => {
+        //console.log(grade !== NaN);
+        if (isNaN(grade)) {
+          if (total.length !== gradeOfAssignments[i].length) {
+            total.push(0);
+          }
+          else {
+            total[index] = total[index] + 0;
+          }
+        }
+        else {
+          if (total.length !== gradeOfAssignments[i].length) {
+            total.push(grade * percent[i])
+            //console.log(grade*percent[i])
+          }
+          else {
+            total[index] = total[index] + grade * percent[i];
+          }
+        }
+      });
+    }
+
+    // Tạo các mảng chứa từng hàng của data
+    let studentId = studentList.studentIdList;
+    let fullName = studentList.fullnameList;
+    let rows = [];
+    rows = studentId.map((id, index) => {
+      return [id, fullName[index]];
+    })
+    for (let i = 0; i < gradeOfAssignments.length; i++) {
+      gradeOfAssignments[i].map((grade, index) => {
+        rows[index].push(grade);
+      })
+    }
+
+    total.map((val,index) => rows[index].push(val.toFixed(2)));
+
+    // Ghép các hàng vào data
+    rows.map(row => data.push(row));
+    //console.log(data);
+  }
+
+  return data;
 }

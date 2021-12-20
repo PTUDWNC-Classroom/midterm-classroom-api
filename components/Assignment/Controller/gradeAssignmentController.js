@@ -184,7 +184,7 @@ exports.getDataExport= async (req, res, next) => {
   // Xử lý map listStudent với assignment 
   const result = await gradeAssignmentService.createManageBoardData(classId,assignmentIdList);
 
-  console.log(result);
+  //console.log(result);
 
-  res.json([["A","B"]]);
+  res.json(result);
 }
