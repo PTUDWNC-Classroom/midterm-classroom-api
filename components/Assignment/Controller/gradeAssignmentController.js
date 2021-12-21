@@ -127,7 +127,8 @@ exports.uploadStudentList = async (req, res, next) => {
   )
 
   // Create gradeList template if gradeAssignment exist
-  gradeAssignmentService.addGradeListTemplate(classId, studentIdList)
+  gradeAssignmentService.addGradeListTemplate(classId)
+
 
   res.json(result)
 }

@@ -28,6 +28,7 @@ exports.getGradeStructAssignment = async (classId) => {
 
   const result_sort = SortByIndexAssignment(result)
 
+
   return result_sort
 }
 
@@ -398,27 +399,51 @@ exports.getRealStudentList = async (classId) => {
   return result
 }
 
-const updateGradeList = async (gradeAssignment, tmpArr) => {
+const updateGradeList = async (gradeAssignment) => {
   gradeAssignment.map(async (item) => {
     await gradeAssignmentModel.GradeAssignment.findOneAndUpdate(
       { _id: item._id },
       {
-        gradeList: tmpArr,
+        gradeList: item.gradeList,
       }
     )
   })
 }
 
-exports.addGradeListTemplate = async (classId, studentIdList) => {
-  const gradeAssignment = await this.getGradeStructAssignment(classId)
+exports.addGradeListTemplate = async (classId) => {
+  // Tìm studentList
+  const studentList = await gradeAssignmentModel.UploadedStudentList.findOne({
+    classId: classId,
+  })
 
-  if (gradeAssignment.length > 0) {
+  const studentIdList = studentList.studentIdList;
+  const gradeAssignment = await this.getGradeStructAssignment(classId)
+  if (gradeAssignment.length > 0 ) {
     const tmpArr = convertArrToObjArr(
       studentIdList,
       Array(studentIdList.length).fill("")
     )
 
-    await updateGradeList(gradeAssignment, tmpArr)
+    
+
+    gradeAssignment.forEach((assignment)=>{
+      let gradeList = assignment.gradeList;
+      let tmpArr2= tmpArr;
+
+      gradeList.forEach(item =>{
+        if(studentIdList.includes(item.studentId))
+        {
+          tmpArr2[studentIdList.indexOf(item.studentId)].grade = item.grade;
+        }
+      })
+
+      assignment.gradeList = tmpArr2;
+    })
+
+    gradeAssignment.forEach((assignment)=> console.log(assignment));
+
+
+    await updateGradeList(gradeAssignment)
   }
 }
 
