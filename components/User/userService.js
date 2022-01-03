@@ -17,13 +17,13 @@ exports.hashPassword = async (password) => {
   return password_hash
 }
 
-exports.checkUserSignUp = async (email) => {
+exports.checkUserSignUp = async (data) => {
   // let check = {
   //   isFailEmail: false,
   //   valid: false,
   // }
   // Kiểm tra email cố tồn tại trong cơ sở dữ liệu không
-  const emailExist = await userModel.findOne({ email: email })
+  const emailExist = await userModel.findOne({ email: data.email })
   //const EmailValidator = new emailValidator();
   //let emailValid = await EmailValidator.verify(account.email);
   // console.log("EMAIL VALID");
