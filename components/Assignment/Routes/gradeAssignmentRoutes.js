@@ -31,4 +31,8 @@ router.get("/total-grade-column/:id", gradeAssignmentController.getTotalGradeCol
 
 router.post("/getDataToExport", gradeAssignmentController.getDataExport)
 
+router.get("/personal-grade-board/:id", gradeAssignmentController.getPersonalGradeBoard)
+
+router.put("/mark-as-final/:id", gradeAssignmentController.upAssignmentStatus)
+
 module.exports = router

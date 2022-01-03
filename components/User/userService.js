@@ -105,7 +105,14 @@ exports.updateStudentId = async (userId, studentId) => {
     }
   }
 
-  await userModel.findOneAndUpdate({ _id: userId }, { studentId: studentId })
+  const result = await userModel.findOne({studentId: studentId})
+
+  // Student Id has been used
+  if (result) {
+    return false
+  } else {
+    await userModel.findOneAndUpdate({ _id: userId }, { studentId: studentId })
+  }
 
   const res = userModel.findById(userId)
   return res

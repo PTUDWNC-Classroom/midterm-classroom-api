@@ -109,7 +109,13 @@ exports.addStudentId = async (req, res, next) => {
     req.user._id,
     req.body.studentId
   )
-  res.json(userInfo)
+
+  if (userInfo) {
+    res.json(userInfo)
+  } else {
+    res.status(409)
+    res.json("Student Id has been used!")
+  }
 }
 
 exports.getUserInfo = async (req, res, next) => {

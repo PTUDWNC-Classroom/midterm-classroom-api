@@ -458,6 +458,7 @@ exports.updateGrade = async (assignmentId, studentId, grade) => {
 exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
   let totalGrade = 0
   let totalGradeColumn = []
+
   if (gradeStructAssignemnt?.length > 0) {
     gradeStructAssignemnt.forEach((item) => {
       totalGrade += parseFloat(item.gradeDetail)
@@ -471,6 +472,8 @@ exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
         totalGradeColumn[index] += parseFloat(
           (student.grade * prescent).toFixed(2)
         )
+
+        if (totalGradeColumn[index] > 100) totalGradeColumn[index] = 100
       })
     })
   }
