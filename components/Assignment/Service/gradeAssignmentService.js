@@ -290,7 +290,7 @@ function SortUpAscending(studentIdList, fullnameList) {
   let name = null;
   for (let i = 0; i < studentIdList.length - 1; i++) {
     for (let j = i + 1; j < studentIdList.length; j++) {
-      if (studentIdList[i] > studentIdList[j]) {
+      if (parseInt(studentIdList[i]) > parseInt(studentIdList[j])) {
         tmp = studentIdList[i]
         studentIdList[i] = studentIdList[j]
         studentIdList[j] = tmp
