@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const userSchema = mongoose.Schema({
+const gradeassignmentSchema = mongoose.Schema({
   classId: { type: mongoose.Schema.Types.ObjectId, require: true },
   userId: { type: mongoose.Schema.Types.ObjectId, require: true },
   gradeTitle: { type: String },
@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema({
   disableState: { type: Boolean },
   indexAssignment: { type: Number },
 
-  // realStudentList: [{ type: String }],
+  // realStudentList: [{ type: String }],W
   // grade: [{ type: String }],
   gradeList: [
     {
@@ -16,6 +16,7 @@ const userSchema = mongoose.Schema({
       grade: { type: String },
     },
   ],
+  isFinalized: {type: Boolean, require: true, default: false}
 })
 
 const uploadedStudentListSchema = mongoose.Schema({
@@ -26,7 +27,7 @@ const uploadedStudentListSchema = mongoose.Schema({
 
 const GradeAssignment = mongoose.model(
   "gradeassignments",
-  userSchema,
+  gradeassignmentSchema,
   "gradeassignments"
 )
 const UploadedStudentList = mongoose.model(

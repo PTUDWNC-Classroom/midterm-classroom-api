@@ -290,7 +290,7 @@ function SortUpAscending(studentIdList, fullnameList) {
   let name = null;
   for (let i = 0; i < studentIdList.length - 1; i++) {
     for (let j = i + 1; j < studentIdList.length; j++) {
-      if (studentIdList[i] > studentIdList[j]) {
+      if (Number(studentIdList[i]) > Number(studentIdList[j])) {
         tmp = studentIdList[i]
         studentIdList[i] = studentIdList[j]
         studentIdList[j] = tmp
@@ -418,21 +418,20 @@ exports.addGradeListTemplate = async (classId) => {
 
   const studentIdList = studentList.studentIdList;
   const gradeAssignment = await this.getGradeStructAssignment(classId)
-  if (gradeAssignment.length > 0 ) {
+  if (gradeAssignment.length > 0) {
     const tmpArr = convertArrToObjArr(
       studentIdList,
       Array(studentIdList.length).fill("")
     )
 
-    
 
-    gradeAssignment.forEach((assignment)=>{
+
+    gradeAssignment.forEach((assignment) => {
       let gradeList = assignment.gradeList;
-      let tmpArr2= tmpArr;
+      let tmpArr2 = tmpArr;
 
-      gradeList.forEach(item =>{
-        if(studentIdList.includes(item.studentId))
-        {
+      gradeList.forEach(item => {
+        if (studentIdList.includes(item.studentId)) {
           tmpArr2[studentIdList.indexOf(item.studentId)].grade = item.grade;
         }
       })
@@ -440,7 +439,7 @@ exports.addGradeListTemplate = async (classId) => {
       assignment.gradeList = tmpArr2;
     })
 
-    gradeAssignment.forEach((assignment)=> console.log(assignment));
+    gradeAssignment.forEach((assignment) => console.log(assignment));
 
 
     await updateGradeList(gradeAssignment)
@@ -467,6 +466,7 @@ exports.updateGrade = async (assignmentId, studentId, grade) => {
 exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
   let totalGrade = 0;
   let totalGradeColumn = []
+
   if (gradeStructAssignemnt?.length > 0) {
     gradeStructAssignemnt.forEach((item) => {
       totalGrade += parseFloat(item.gradeDetail)
@@ -478,6 +478,8 @@ exports.calcTotalGradeColumn = async (gradeStructAssignemnt, classId) => {
       const prescent = parseFloat(item.gradeDetail) / totalGrade
       item.gradeList.forEach((student, index) => {
         totalGradeColumn[index] += parseFloat((student.grade * prescent).toFixed(2))
+
+        if (totalGradeColumn[index] > 100) totalGradeColumn[index] = 100
       })
     })
   }
@@ -516,12 +518,12 @@ exports.createManageBoardData = async (classId, assignmentIdList) => {
 
     // Tính phần trăm của mỗi assignment
     let totalGrade = 0;
-    percent.forEach((grade)=>{
-      totalGrade+=grade;
+    percent.forEach((grade) => {
+      totalGrade += grade;
     })
 
-    percent = percent.map((grade)=>{
-      return grade/totalGrade;
+    percent = percent.map((grade) => {
+      return grade / totalGrade;
     })
 
     //console.log(percent);
@@ -568,7 +570,7 @@ exports.createManageBoardData = async (classId, assignmentIdList) => {
       })
     }
 
-    total.map((val,index) => rows[index].push(val.toFixed(2)));
+    total.map((val, index) => rows[index].push(val.toFixed(2)));
 
     // Ghép các hàng vào data
     rows.map(row => data.push(row));
@@ -576,4 +578,24 @@ exports.createManageBoardData = async (classId, assignmentIdList) => {
   }
 
   return data;
+}
+
+/**
+ * Mark a grade composition as finalized
+ * @param {String} assignmentId assignment Id
+ * @param {Boolean} status true if this assignment is marked as final
+ * @returns 
+ */
+exports.markAsFinal = async (assignmentId, status) => {
+  if (this.isValidObjectId(assignmentId)) {
+    await gradeAssignmentModel.GradeAssignment.findOneAndUpdate({
+      _id: assignmentId
+    }, {
+      isFinalized: status
+    })
+
+    return true
+  } else {
+    return false
+  }
 }

@@ -39,7 +39,12 @@ app.use(
   classesRouter
 )
 app.use("/join", joinRouter)
-app.use("/assignment", assignmentRouter)
+app.use("/assignment",
+  passport.authenticate("jwt", {
+    session: false,
+  }), 
+  assignmentRouter
+)
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404))
