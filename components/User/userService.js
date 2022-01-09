@@ -100,8 +100,8 @@ exports.updateStudentId = async (userId, studentId) => {
 
   if (!userInfo) {
     return {
-      status: 412,
-      error: "Precondition Failed ",
+      status: 409,
+      error: "Precondition Failed",
     }
   }
 
