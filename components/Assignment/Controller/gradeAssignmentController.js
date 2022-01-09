@@ -1,4 +1,6 @@
+const userModel = require("../../User/userModel")
 const gradeAssignmentService = require("../Service/gradeAssignmentService")
+const studentGradeService = require("../Service/studentGradeService")
 
 exports.getGradeStruct = async (req, res, next) => {
   //console.log("getGradeStruct")
@@ -185,13 +187,55 @@ exports.getDataExport = async (req, res, next) => {
   const classId = req.body.classId
   const assignmentIdList = req.body.assignmentIdList
 
-  // Xử lý map listStudent với assignment
-  const result = await gradeAssignmentService.createManageBoardData(
-    classId,
-    assignmentIdList
-  )
+  // Xử lý map listStudent với assignment 
+  const result = await gradeAssignmentService.createManageBoardData(classId, assignmentIdList);
 
   //console.log(result);
 
+  res.json(result);
+}
+
+exports.getPersonalGradeBoard = async (req, res, next) => {
+  const userId = req.user._id
+  const classId = req.params.id
+
+  const user = await userModel.findById(userId)
+
+  const result = {
+    haveStudentId: false,
+    existsStudentIdInList: false,
+    grades: []
+  } 
+
+  //  Kiem tra sinh vien da nhap studentId chua
+  if (user?.studentId) {
+    //const checkStudentInClass = await gradeAssignmentService.findStudent(classId, user.studentId)
+    console.log("--user", user)
+    // Kiem tra studentId co trong danh sach lop hay khong
+    const student = await studentGradeService.getStudentInUploadedStudentList(classId, user.studentId)
+
+    if (student) {
+      const grades = await studentGradeService.createPersonalGradeBoard(classId, user.studentId)
+      const fullname = await studentGradeService.getFullname(classId, user.studentId)
+
+      console.log(grades, fullname) 
+      result.haveStudentId = true
+      result.existsStudentIdInList = true
+      result.grades = grades
+      res.json(result)
+    } else {
+      result.haveStudentId = true
+      res.json(result)
+    }
+    
+  } else {
+    res.json(result)
+  }
+}
+
+exports.upAssignmentStatus = async (req, res, next) => {
+  const assignmentId = req.params.id
+  const status = req.body.assignmentStatus
+  const result = gradeAssignmentService.markAsFinal(assignmentId, status)
   res.json(result)
 }

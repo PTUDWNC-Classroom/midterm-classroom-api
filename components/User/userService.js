@@ -21,13 +21,13 @@ exports.hashPassword = async (password) => {
   return password_hash
 }
 
-exports.checkUserSignUp = async (email) => {
+exports.checkUserSignUp = async (data) => {
   // let check = {
   //   isFailEmail: false,
   //   valid: false,
   // }
   // Kiểm tra email cố tồn tại trong cơ sở dữ liệu không
-  const emailExist = await userModel.findOne({ email: email })
+  const emailExist = await userModel.findOne({ email: data.email })
   //const EmailValidator = new emailValidator();
   //let emailValid = await EmailValidator.verify(account.email);
   // console.log("EMAIL VALID");
@@ -104,12 +104,19 @@ exports.updateStudentId = async (userId, studentId) => {
 
   if (!userInfo) {
     return {
-      status: 412,
-      error: "Precondition Failed ",
+      status: 409,
+      error: "Precondition Failed",
     }
   }
 
-  await userModel.findOneAndUpdate({ _id: userId }, { studentId: studentId })
+  const result = await userModel.findOne({studentId: studentId})
+
+  // Student Id has been used
+  if (result) {
+    return false
+  } else {
+    await userModel.findOneAndUpdate({ _id: userId }, { studentId: studentId })
+  }
 
   const res = userModel.findById(userId)
   return res

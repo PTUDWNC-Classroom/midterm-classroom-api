@@ -14,7 +14,7 @@ exports.signUpHandler = async (req, res, next) => {
   //console.log(req.body)
   const data = req.body
   const checkEmailValid = await userService.checkUserSignUp(data)
-  //console.log("checkEmailValid")
+  console.log("checkEmailValid")
   //console.log(checkEmailValid)
   if (checkEmailValid) {
     const randomOTP = random.int((min = 100000), (max = 999999))
@@ -135,7 +135,13 @@ exports.addStudentId = async (req, res, next) => {
     req.user._id,
     req.body.studentId
   )
-  res.json(userInfo)
+
+  if (userInfo) {
+    res.json(userInfo)
+  } else {
+    res.status(409)
+    res.json("Student Id has been used!")
+  }
 }
 
 exports.getUserInfo = async (req, res, next) => {
