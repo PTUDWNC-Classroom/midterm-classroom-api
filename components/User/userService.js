@@ -1,10 +1,14 @@
 const bcrypt = require("bcrypt")
 //const emailValidator = require('email-deep-validator');
 const { OAuth2Client } = require("google-auth-library")
+const { v4: uuidv4 } = require("uuid")
+const jwt = require("jsonwebtoken")
+const { isBefore, addSeconds } = require("date-fns")
 
 const userModel = require("./userModel")
 const mongoose = require("mongoose")
 const saltRounds = 10
+const refreshTokenModel = require("./refreshTokenModel")
 
 exports.hashPassword = async (password) => {
   const password_hash = await new Promise((resolve, reject) => {
@@ -129,4 +133,48 @@ exports.getDecodedOAuthJwtGoogle = async (token) => {
   } catch (error) {
     return { status: 500, data: error }
   }
+}
+
+exports.createRefreshToken = async (user) => {
+  const refreshToken = uuidv4()
+
+  let expiredAt = addSeconds(new Date(), process.env.REFRESH_TOKEN_EXPIRATION)
+
+  // Save refreshToken to database
+  await new refreshTokenModel({
+    userId: user._id,
+    username: user.username,
+    refreshToken: refreshToken,
+    expiryDate: expiredAt,
+  }).save()
+
+  return refreshToken
+}
+
+exports.getRefreshTokenInfo = async (refreshToken) => {
+  const result = await refreshTokenModel.findOne({ refreshToken: refreshToken })
+  return result
+}
+
+exports.verifyExpiration = (token) => {
+  return isBefore(token.expiryDate, new Date())
+}
+
+exports.createAccessToken = (userId, username) => {
+  const accessToken = jwt.sign(
+    {
+      _id: userId,
+      username: username,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
+    }
+  )
+
+  return accessToken
+}
+
+exports.deleteRefreshToken = async (userId) => {
+  await refreshTokenModel.deleteOne({ userId: userId })
 }

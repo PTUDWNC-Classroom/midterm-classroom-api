@@ -27,6 +27,10 @@ router.post(
   userController.addStudentId
 )
 
+router.post("/exchange-access-token", userController.exchangeAccessToken)
+
+//router.post("/revoke-token")
+
 router.get(
   "/",
   passport.authenticate("jwt", {

@@ -4,6 +4,7 @@ const random = require("random")
 const jwt = require("jsonwebtoken")
 
 const userModel = require("./userModel")
+const refreshTokenModel = require("./refreshTokenModel")
 
 let store = require("store")
 
@@ -39,33 +40,48 @@ exports.loginSocialHandler = async (req, res, next) => {
   const emailExistInData = await userModel.findOne({ email: data.email })
 
   if (emailExistInData && emailExistInData.password === undefined) {
+    const result = await refreshTokenModel.findOne({
+      userId: emailExistInData._id,
+    })
+    const user = {
+      _id: emailExistInData._id,
+      username: emailExistInData.username,
+    }
+    let refreshToken = ""
+
+    if (result) {
+      refreshToken = result.refreshToken
+    } else {
+      refreshToken = await userService.createRefreshToken(user)
+    }
+
     res.json({
       user: emailExistInData,
-      idToken: jwt.sign(
-        {
-          _id: emailExistInData._id,
-          username: emailExistInData.username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "7h",
-        }
-      ),
+      idToken: jwt.sign(user, process.env.JWT_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
+      }),
+      refreshToken: refreshToken,
     })
   } else if (emailExistInData === null) {
     const newUser = await userService.addSocialLoginUser(data)
+    const result = await refreshTokenModel.findOne({ userId: newUser._id })
+    const userObj = {
+      _id: newUser._id,
+      username: newUser.username,
+    }
+    let refreshToken = ""
+
+    if (result) {
+      refreshToken = result.refreshToken
+    } else {
+      refreshToken = await userService.createRefreshToken(userObj)
+    }
     res.json({
       user: newUser,
-      idToken: jwt.sign(
-        {
-          _id: newUser._id,
-          username: newUser.username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "7h",
-        }
-      ),
+      idToken: jwt.sign(userObj, process.env.JWT_SECRET, {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
+      }),
+      refreshToken: refreshToken,
     })
   } else {
     res.json(false)
@@ -89,6 +105,15 @@ exports.validEmailHandler = async (req, res, next) => {
 }
 
 exports.signInHandler = async (req, res, next) => {
+  const result = await refreshTokenModel.findOne({ userId: req.user._id })
+  let refreshToken = ""
+
+  if (result) {
+    refreshToken = result.refreshToken
+  } else {
+    refreshToken = await userService.createRefreshToken(req.user)
+  }
+
   res.json({
     user: req.user,
     token: jwt.sign(
@@ -98,9 +123,10 @@ exports.signInHandler = async (req, res, next) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7h",
+        expiresIn: process.env.ACCESS_TOKEN_EXPIRATION,
       }
     ),
+    refreshToken: refreshToken,
   })
 }
 
@@ -119,4 +145,34 @@ exports.getUserInfo = async (req, res, next) => {
     if (userInfo.password) delete userInfo.password
     res.json(userInfo)
   } else res.sendStatus(404)
+}
+
+exports.exchangeAccessToken = async (req, res, next) => {
+  const { refreshToken } = req.body
+  const refreshTokenInfo = await userService.getRefreshTokenInfo(refreshToken)
+
+  if (!refreshTokenInfo) {
+    res.status(403).json({ message: "Refresh token is not in database!" })
+    return
+  }
+
+  if (userService.verifyExpiration(refreshTokenInfo)) {
+    await userService.deleteRefreshToken(refreshTokenInfo.userId)
+
+    res.status(403).json({
+      message: "Refresh token was expired. Please make a new signin request",
+    })
+    return
+  }
+
+  const user = await userModel.findOne({ _id: refreshTokenInfo.userId })
+
+  const newAccessToken = userService.createAccessToken(user._id, user.username)
+
+  res.status(200)
+  res.json({
+    //user: user,
+    token: newAccessToken,
+    //refreshToken: refreshToken,
+  })
 }
