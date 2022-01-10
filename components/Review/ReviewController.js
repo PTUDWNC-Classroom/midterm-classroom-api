@@ -3,7 +3,7 @@ const reviewService = require("./ReviewService")
 exports.sendMessage = async (req, res, next) => {
     const info = req.body;
 
-    reviewService.handleMessage(info)
+    const result = reviewService.handleMessage(info)
 
-    res.json("hello");   
+    res.json(result);   
 }
