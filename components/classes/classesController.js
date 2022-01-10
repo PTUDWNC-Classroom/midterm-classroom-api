@@ -1,7 +1,9 @@
 const mongoose = require("mongoose")
 const classesService = require("./classesService")
 const userService = require("../User/userService")
-
+const userModel = require("../User/userModel")
+const studentGradeService = require("../Assignment/Service/studentGradeService")
+const gradeAssignMentService = require("../Assignment/Service/gradeAssignmentService")
 exports.getClassList = async (req, res, next) => {
   const _id = req.user._id
   const result = await classesService.getClassList(_id)
@@ -48,4 +50,44 @@ exports.getListOfTeachers = async (req, res, next) => {
 exports.getListOfStudents = async (req, res, next) => {
   const listOfTeachers = await classesService.getListOfStudents(req.params.id)
   res.json(listOfTeachers)
+}
+
+exports.getMemberDetails = async (req, res, next) => {
+  const userId = req.params.id
+  const classId = req.url.split("/")[1]
+  console.log(classId)
+
+  if (!gradeAssignMentService.isValidObjectId(userId)) {
+    res.status(404)
+    res.send("Not found!")
+    return
+  }
+
+  const result = await userModel.findById(userId)
+
+  if (result) {
+    if (result.studentId) {
+      const fullName = await studentGradeService.getFullname(classId, result.studentId)
+
+      res.json ({
+        username: result.username,
+        email: result.email,
+        studentId: result.studentId,
+        fullName: fullName
+      })
+
+      return
+    }
+
+    res.json ({
+      username: result.username,
+      email: result.email,
+      studentId: "",
+      fullName: ""
+    })
+
+  } else {
+    res.status(404)
+    res.send("Not found!")
+  }
 }

@@ -210,7 +210,7 @@ exports.getPersonalGradeBoard = async (req, res, next) => {
   //  Kiem tra sinh vien da nhap studentId chua
   if (user?.studentId) {
     //const checkStudentInClass = await gradeAssignmentService.findStudent(classId, user.studentId)
-    console.log("--user", user)
+    //console.log("--user", user)
     // Kiem tra studentId co trong danh sach lop hay khong
     const student = await studentGradeService.getStudentInUploadedStudentList(classId, user.studentId)
 
@@ -218,7 +218,7 @@ exports.getPersonalGradeBoard = async (req, res, next) => {
       const grades = await studentGradeService.createPersonalGradeBoard(classId, user.studentId)
       const fullname = await studentGradeService.getFullname(classId, user.studentId)
 
-      console.log(grades, fullname) 
+      //console.log(grades, fullname) 
       result.haveStudentId = true
       result.existsStudentIdInList = true
       result.grades = grades

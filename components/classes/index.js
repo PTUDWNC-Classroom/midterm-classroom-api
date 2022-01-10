@@ -9,6 +9,8 @@ router.get("/students-of-class/:id", classesController.getListOfStudents)
 
 router.get("/class-list", classesController.getClassList)
 
+router.get("/:id/member-details/:id", classesController.getMemberDetails)
+
 router.get("/:id", classesController.getClass)
 
 /* GET classes listing. */
