@@ -7,6 +7,12 @@ const userController = require("./userController")
 
 router.post("/sign-up", userController.signUpHandler)
 
+router.post("/forgot-pass", userController.forgotPassHandler)
+
+router.post("/confirm-OTP", userController.confirmOTP)
+
+router.post("/update-password",userController.updatePassword)
+
 router.post("/login-social", userController.loginSocialHandler)
 
 router.post("/valid-email", userController.validEmailHandler)

@@ -28,6 +28,43 @@ exports.signUpHandler = async (req, res, next) => {
   res.json(checkEmailValid)
 }
 
+exports.forgotPassHandler = async (req, res, next) => {
+  //console.log(req.body)
+  const email = req.body.email;
+  const result = await userService.checkUserExist(email);
+  if(result)
+  {
+    const randomOTP = random.int((min = 100000), (max = 999999))
+    store.set("ChangePasswordOTP",randomOTP)
+    mailer.sendmail(email, randomOTP)
+  }
+  //console.log(result)
+  res.json(result);
+}
+
+exports.confirmOTP= async (req, res, next) => {
+  //console.log(typeof(req.body.ChangePasswordOTP))
+  const data = req.body;
+  let result = false;
+  //console.log(store.get("ChangePasswordOTP"));
+  if(parseInt(data.ChangePasswordOTP) === store.get("ChangePasswordOTP"))
+  {
+    result = true;
+    //console.log("true");
+  }
+
+  return res.json(result);
+}
+
+exports.updatePassword = async (req, res, next) => {
+  const data = req.body;
+  console.log(data)
+  const newpassword_hash = await userService.hashPassword(data.newpassword);
+  await userModel.findOneAndUpdate({email: data.email},{password: newpassword_hash})
+
+  return res.json(true);
+}
+
 exports.loginSocialHandler = async (req, res, next) => {
   const userInfo = await userService.getDecodedOAuthJwtGoogle(req.body.idToken)
 

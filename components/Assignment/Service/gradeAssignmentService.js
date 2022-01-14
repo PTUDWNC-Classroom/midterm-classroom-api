@@ -1,4 +1,5 @@
 const mongoose = require("mongoose")
+const ReviewModel = require("../../Review/ReviewModel")
 const gradeAssignmentModel = require("../Model/gradeAssignment")
 
 // Sắp xếp theo indexAssignment
@@ -574,4 +575,29 @@ exports.createManageBoardData = async (classId, assignmentIdList) => {
   }
 
   return data
+}
+
+
+exports.updateGradeByReview =  async (data) => {
+  console.log(data.reviewId)
+  const review = await ReviewModel.findOneAndUpdate({_id: data.reviewId},
+    {
+      expectationGrade: data.expectGrade
+    })
+  console.log(review)
+  const assignment = await gradeAssignmentModel.GradeAssignment.findOne({_id:review.assignmentId});
+
+  assignment.gradeList.forEach(element => {
+    if(element.studentId === review.ID)
+    {
+      element.grade = data.expectGrade;
+    }
+  });
+
+  const result = await gradeAssignmentModel.GradeAssignment.findByIdAndUpdate({_id: review.assignmentId},
+    {
+      gradeList: assignment.gradeList
+    })
+
+  return result;
 }
