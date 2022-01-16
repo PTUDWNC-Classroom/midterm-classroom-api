@@ -23,11 +23,18 @@ exports.getReviewData = async (req, res, next) => {
     console.log(info)
     const result = await ReviewModel.findOne({ _id: info.reviewId })
     //console.log(result)
-    const className = await classModel.Classes.findOne({ _id: result.classId })
+    const className = await classModel.TeachersOfClass.find({ classId: result.classId })
     //console.log(className)
-    
+    let isTeacher = false;
+    for(let i of className)
+    {
+        if((i.userId).toString() === info.userId)
+        {
+            isTeacher = true;
+        }
+    }
     //console.log((className.creator).toString())
-    if (result.studentId !== info.userId && (className.creator).toString() !== info.userId) {
+    if (result.studentId !== info.userId && isTeacher === false) {
         res.status(404)
     }
     else if(result.studentId === info.userId)
@@ -37,7 +44,7 @@ exports.getReviewData = async (req, res, next) => {
             disable: true
         });
     }
-    else if((className.creator).toString() === info.userId)
+    else if(isTeacher)
     {
         res.json({
             data: result,

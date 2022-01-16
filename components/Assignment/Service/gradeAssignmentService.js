@@ -601,3 +601,23 @@ exports.updateGradeByReview =  async (data) => {
 
   return result;
 }
+
+/**
+ * Mark a grade composition as finalized
+ * @param {String} assignmentId assignment Id
+ * @param {Boolean} status true if this assignment is marked as final
+ * @returns 
+ */
+ exports.markAsFinal = async (assignmentId, status) => {
+  if (this.isValidObjectId(assignmentId)) {
+    await gradeAssignmentModel.GradeAssignment.findOneAndUpdate({
+      _id: assignmentId
+    }, {
+      isFinalized: status
+    })
+
+    return true
+  } else {
+    return false
+  }
+} 
