@@ -4,6 +4,8 @@ const userService = require("../User/userService")
 const userModel = require("../User/userModel")
 const studentGradeService = require("../Assignment/Service/studentGradeService")
 const gradeAssignMentService = require("../Assignment/Service/gradeAssignmentService")
+
+
 exports.getClassList = async (req, res, next) => {
   const _id = req.user._id
   const result = await classesService.getClassList(_id)
@@ -26,6 +28,10 @@ exports.createClass = async (req, res, next) => {
     userInfo.username,
     userInfo.email
   )
+  
+  const code = await classesService.generateCode(newClass._id.toString())
+  console.log(code);
+  
   const updateData = {
     creator: mongoose.Types.ObjectId(userId),
     className: data.className,
@@ -33,6 +39,7 @@ exports.createClass = async (req, res, next) => {
     subject: data.subject,
     room: data.room,
     inviteCode: newClass._id.toString(),
+    code: code
   }
   //console.log("modify")
 

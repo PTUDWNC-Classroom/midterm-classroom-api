@@ -1,9 +1,11 @@
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 const classModel = require("../classes/classesModel")
 
 
 exports.addStudent = async ({userInfo}) => {
     //console.log("userINFO")
-    //console.log(userInfo)
+    console.log(userInfo)
     const user = {
         classId: userInfo.classId,
         userId: userInfo._id,
@@ -35,4 +37,27 @@ exports.addTeacher= async ({userInfo}) => {
     //console.log("add teacher");
 
     return newTeacher;
+}
+
+exports.findClassId = async(code)=>
+{
+  const classList = await classModel.Classes.find();
+  let result = false;
+  let classId = ""
+  for(let classElement of classList)
+  {
+ 
+    //console.log(classElement._id)
+    result = await bcrypt.compare(classElement._id.toString(), code)
+    
+    
+    if(result)
+    {
+      console.log(classElement._id)
+      classId = (classElement._id).toString();
+    }
+  }
+
+
+  return classId;
 }

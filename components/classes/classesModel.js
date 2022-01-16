@@ -8,6 +8,7 @@ const classesSchema = mongoose.Schema({
   room: { type: String },
   createdDate: { type: Date, default: Date.now() },
   inviteCode: { type: String, require: true },
+  code: {type: String}
 })
 
 const teachersOfClassSchema = mongoose.Schema({
