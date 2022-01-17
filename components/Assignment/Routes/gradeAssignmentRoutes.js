@@ -35,4 +35,6 @@ router.get("/personal-grade-board/:id", gradeAssignmentController.getPersonalGra
 
 router.put("/mark-as-final/:id", gradeAssignmentController.upAssignmentStatus)
 
+router.post("/updateGradeByReview", gradeAssignmentController.updateGradeByReview)
+
 module.exports = router

@@ -60,6 +60,7 @@ exports.createNewUser = async (data) => {
     username: data.username,
     password: data.password,
     email: data.email,
+    isBlock: false
   }
 
   const newUser = new userModel(userInfo)
@@ -67,6 +68,25 @@ exports.createNewUser = async (data) => {
   await newUser.save()
 
   return newUser._id
+}
+
+exports.checkUserExist = async(email)=>{
+  //console.log(email)
+  const result = await userModel.findOne({email: email})
+  //console.log(result);
+  if(result)
+  {
+    if(!result.password)
+    {
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+  else{
+    return false;
+  }
 }
 
 exports.addSocialLoginUser = async (data) => {

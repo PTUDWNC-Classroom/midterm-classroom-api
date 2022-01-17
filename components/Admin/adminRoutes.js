@@ -40,4 +40,14 @@ router.get(
 
 //router.get("/", adminController.getStatistics)
 
+// --- Commit:  add adminModel and add isBlock into userModel (ca3b745) ---
+router.post("/sign-in", adminController.signInHandler)
+
+router.post("/getAdminData", adminController.getAdminData)
+
+router.post("/getUserData", adminController.getUserData)
+
+router.post("/getClassData", adminController.getClassData)
+// --- Commit:  add adminModel and add isBlock into userModel (ca3b745) ---
+
 module.exports = router;

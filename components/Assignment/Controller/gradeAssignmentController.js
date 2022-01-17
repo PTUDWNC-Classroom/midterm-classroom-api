@@ -239,3 +239,17 @@ exports.upAssignmentStatus = async (req, res, next) => {
   const result = gradeAssignmentService.markAsFinal(assignmentId, status)
   res.json(result)
 }
+
+exports.updateGradeByReview = async (req, res, next) => {
+  console.log(req.body);
+  const data = req.body;
+  const result = await gradeAssignmentService.updateGradeByReview(data)
+  console.log(result)
+  if(result)
+  {
+    res.json(true)
+  }
+  else{
+    res.json(false)
+  }
+}

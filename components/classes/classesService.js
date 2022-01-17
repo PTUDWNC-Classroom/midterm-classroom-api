@@ -1,3 +1,6 @@
+const bcrypt = require("bcrypt")
+const saltRounds = 10
+
 const mongoose = require("mongoose")
 //const { compareDesc } = require("date-fns")
 const compareDesc = require("date-fns/compareDesc")
@@ -43,6 +46,7 @@ exports.createNewClass = async (data) => {
     subject: data.subject,
     room: data.room,
     inviteCode: "invite-code",
+    code : ""
   }
   const newClass = new classesModel.Classes(classInfo)
 
@@ -73,6 +77,7 @@ exports.classModify = async ({ updateData }) => {
       subject: updateData.subject,
       room: updateData.room,
       inviteCode: updateData.inviteCode,
+      code: updateData.code
     }
   )
 
@@ -102,4 +107,16 @@ exports.addTeacherToClass = async (classId, userId, username, email) => {
   const newTeacher = classesModel.TeachersOfClass(teacherInfo)
   await newTeacher.save()
   //console.log("save new teacher")
+}
+
+exports.generateCode = async(id)=>
+{
+  const code = await new Promise((resolve, reject) => {
+    bcrypt.hash(id, saltRounds, function (err, hash) {
+      if (err) reject(err)
+      resolve(hash)
+    })
+  })
+
+  return code;
 }

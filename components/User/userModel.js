@@ -5,6 +5,7 @@ const userSchema = mongoose.Schema({
   password: { type: String },
   email: { type: String, require: true },
   studentId: { type: String, default: "" },
+  isBlock: {type: Boolean}
 })
 
 module.exports = mongoose.model("users", userSchema)

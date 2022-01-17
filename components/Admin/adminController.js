@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const adminSevice = require("./adminService");
+const adminService = require("./adminService");
 const userService = require("../User/userService");
 const { AdminAccount } = require("./adminModel");
 
@@ -16,10 +16,10 @@ exports.socialLoginHandler = async (req, res, next) => {
   };
 
   // const emailExistInData = await userModel.findOne({ email: data.email });
-  const emailExistInData = await adminSevice.getAccount(data.email);
+  const emailExistInData = await adminService.getAccount(data.email);
 
   if (emailExistInData && emailExistInData.password === undefined) {
-    const refreshToken = await adminSevice.getRefreshToken(emailExistInData);
+    const refreshToken = await adminService.getRefreshToken(emailExistInData);
 
     const user = {
       _id: emailExistInData._id,
@@ -42,12 +42,12 @@ exports.socialLoginHandler = async (req, res, next) => {
 exports.loginHandler = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const admin = await adminSevice.checkAdmin(email, password);
+  const admin = await adminService.checkAdmin(email, password);
   console.log("loginHandler: " + req.headers.authorization);
 
   if (admin) {
-    const refreshToken = await adminSevice.getRefreshToken(admin);
-    const role = await adminSevice.getRole(admin._id);
+    const refreshToken = await adminService.getRefreshToken(admin);
+    const role = await adminService.getRole(admin._id);
 
     res.json({
       user: admin,
@@ -117,8 +117,8 @@ exports.logoutHandler = async (req, res, next) => {};
 
 exports.getStatistics = async (req, res, next) => {
   console.log("getStatistics: " + req.headers.authorization);
-  const classTotal = await adminSevice.getClassTotal();
-  const userTotal = await adminSevice.getUserTotal();
+  const classTotal = await adminService.getClassTotal();
+  const userTotal = await adminService.getUserTotal();
 
   res.json({
     classTotal: classTotal,
@@ -127,5 +127,81 @@ exports.getStatistics = async (req, res, next) => {
 };
 
 // exports.getAdminList = async (req, res, next) => {
-//   const adminList = await adminSevice.getAdminList();
+//   const adminList = await adminService.getAdminList();
 // };
+
+// --- Commit:  add adminModel and add isBlock into userModel (ca3b745) ---
+
+// const password = await new Promise((resolve, reject) => {
+//     bcrypt.hash("admin", saltRounds, function (err, hash) {
+//         if (err) reject(err)
+//         resolve(hash)
+//     })
+// })
+// const userInfo = {
+//     username: "admin",
+//     password: password,
+//     email: "lyhandong123@gmail.com",
+//     dateCreate: new Date()
+// }
+
+// const newUser = new adminModel(userInfo)
+
+// await newUser.save()
+
+// return newUser._id
+
+exports.signInHandler = async (req, res, next) => {
+  const userInfo = req.body;
+  console.log(userInfo)
+  /**
+   * username
+   * password
+   */
+
+  // Kiểm tra admin có trong data không
+  const result = await adminService.isExistInData(userInfo);
+
+  res.json(result)
+}
+
+exports.getAdminData = async (req, res, next) => {
+  const userInfo = req.body;
+  console.log(userInfo)
+  /**
+   * user
+   */
+
+  // Lấy admin account trong cơ sở dữ liệu 
+  const result = await adminService.getAdminData(userInfo);
+
+  res.json(result)
+}
+
+exports.getUserData = async (req, res, next) => {
+  const userInfo = req.body;
+  console.log(userInfo)
+  /**
+   * user
+   */
+
+  // Lấy admin account trong cơ sở dữ liệu 
+  const result = await adminService.getUserData(userInfo);
+
+  res.json(result)
+}
+
+exports.getClassData = async (req, res, next) => {
+  const userInfo = req.body;
+  console.log(userInfo)
+  /**
+   * user
+   */
+
+  // Lấy admin account trong cơ sở dữ liệu 
+  const result = await adminService.getClassData(userInfo);
+
+  res.json(result)
+}
+
+// --- Commit:  add adminModel and add isBlock into userModel (ca3b745) ---

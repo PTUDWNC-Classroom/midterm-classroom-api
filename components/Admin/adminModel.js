@@ -7,6 +7,7 @@ const adminAccountSchema = mongoose.Schema({
   password: { type: String },
   phoneNumber: { type: String },
   address: { type: String },
+  createdDate: {tyoe: Date},
 });
 
 const adminRoleSchema = mongoose.Schema({
@@ -31,3 +32,16 @@ module.exports = {
   AdminRole,
   Role,
 };
+
+// --- Commit:  add adminModel and add isBlock into userModel (ca3b745) ---
+
+// const adminSchema = mongoose.Schema({
+//   username: { type: String, require: true },
+//   password: { type: String },
+//   email: { type: String, require: true },
+//   dateCreate: {type: Date}
+// })
+
+// module.exports = mongoose.model("admins", adminSchema)
+
+// --- Commit:  add adminModel and add isBlock into userModel (ca3b745) ---
