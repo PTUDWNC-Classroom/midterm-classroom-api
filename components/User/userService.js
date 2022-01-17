@@ -60,6 +60,7 @@ exports.createNewUser = async (data) => {
     username: data.username,
     password: data.password,
     email: data.email,
+    isBlock: false
   }
 
   const newUser = new userModel(userInfo)
