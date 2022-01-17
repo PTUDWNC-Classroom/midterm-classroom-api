@@ -39,7 +39,6 @@ opts.secretOrKey = process.env.JWT_SECRET
 
 passport.use(
   new JwtStrategy(opts, (jwt_payload, done) => {
-    //console.log(jwt_payload)
     return done(null, { _id: jwt_payload._id, username: jwt_payload.username })
   })
 )

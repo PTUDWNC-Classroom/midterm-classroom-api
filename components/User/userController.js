@@ -33,8 +33,8 @@ exports.loginSocialHandler = async (req, res, next) => {
 
   const data = {
     email: userInfo.payload.email,
-    username: userInfo.payload.name,
-    studentId: "",
+    //username: userInfo.payload.name,
+    //studentId: "",
   }
 
   const emailExistInData = await userModel.findOne({ email: data.email })
@@ -156,9 +156,10 @@ exports.getUserInfo = async (req, res, next) => {
 exports.exchangeAccessToken = async (req, res, next) => {
   const { refreshToken } = req.body
   const refreshTokenInfo = await userService.getRefreshTokenInfo(refreshToken)
-
+  console.log(refreshToken);
   if (!refreshTokenInfo) {
-    res.status(403).json({ message: "Refresh token is not in database!" })
+    res.status(403).json({ message: "Refresh token is not found. Please make a new signin request." })
+    console.log("Refresh token is not found")
     return
   }
 
@@ -166,8 +167,9 @@ exports.exchangeAccessToken = async (req, res, next) => {
     await userService.deleteRefreshToken(refreshTokenInfo.userId)
 
     res.status(403).json({
-      message: "Refresh token was expired. Please make a new signin request",
+      message: "Refresh token was expired. Please make a new signin request.",
     })
+    console.log("Refresh token was expired.")
     return
   }
 
