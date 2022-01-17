@@ -14,9 +14,8 @@ const classesRouter = require("./components/classes/index")
 const joinRouter = require("./components/JoinClass/JoinRouter")
 const assignmentRouter = require("./components/Assignment/Routes/gradeAssignmentRoutes")
 const reviewRouter = require("./components/Review/ReviewRouter")
-const adminRouter = require("./components/Admin/adminRoutes");
 const notificationRouter = require("./components/Notification/NotificationRouter")
-//const adminRouter = require("./Admin/adminRouter")
+const adminRouter = require("./Admin/adminRouter")
 const app = express()
 
 // view engine setup
@@ -54,7 +53,7 @@ app.use("/review",reviewRouter);
 
 app.use("/notification",notificationRouter);
 
-app.use("/admin", adminRouter)
+app.use("/admin",adminRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
