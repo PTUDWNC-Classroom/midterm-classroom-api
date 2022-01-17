@@ -14,8 +14,8 @@ const classesRouter = require("./components/classes/index")
 const joinRouter = require("./components/JoinClass/JoinRouter")
 const assignmentRouter = require("./components/Assignment/Routes/gradeAssignmentRoutes")
 const reviewRouter = require("./components/Review/ReviewRouter")
-const notificationRouter = require("./components/Notification/NotificationRouter")
-const adminRouter = require("./Admin/adminRouter")
+const notificationRouter = require("./components/NotificationCustom/NotificationRouter")
+const adminRouter = require("./components/Admin/adminRouter")
 const app = express()
 
 // view engine setup
